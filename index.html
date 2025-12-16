@@ -18,9 +18,9 @@
             --bg-light: #f4f6f8;
             --text-main: #1a1a1a;
             --text-muted: #555555;
+            /* Added Noto Sans TC for better Chinese rendering */
             --font-display: 'Orbitron', sans-serif;
             --font-body: 'Noto Sans TC', sans-serif;
-            --whatsapp-green: #25d366;
         }
 
         * {
@@ -98,33 +98,6 @@
         .download-nav:hover { 
             background-color: var(--text-main); 
             color: white; 
-        }
-
-        /* --- WHATSAPP FLOATING BUTTON --- */
-        .whatsapp-float {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            bottom: 30px;
-            right: 30px;
-            background-color: var(--whatsapp-green);
-            color: #FFF;
-            border-radius: 50px;
-            text-align: center;
-            font-size: 35px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-            z-index: 2000; /* High z-index to sit on top of everything */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .whatsapp-float:hover {
-            transform: scale(1.1);
-            box-shadow: 2px 2px 15px rgba(0,0,0,0.3);
-            background-color: #1ebd57;
         }
 
         /* --- PAGE CONTENT HANDLING --- */
@@ -287,24 +260,26 @@
             margin-bottom: 15px;
         }
 
-        /* 課程專用：雙欄 */
         .grid-container {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 兩欄 */
+            grid-template-columns: 1fr 1fr; 
             gap: 30px;
+
             max-width: 900px;
             margin: 0 auto;
+
             align-items: start;
         }
 
-        /* 首頁核心價值專用：三欄 */
+        /* 首頁核心價值專用：強制三欄 */
         .values-container {
             display: grid;
+            /* repeat(3, 1fr) 代表分為三個等寬的欄位 */
             grid-template-columns: repeat(3, 1fr); 
             gap: 25px;
-            max-width: 1200px;
+            max-width: 1200px; /* 寬度設寬一點，容納三個方塊 */
             margin: 0 auto;
-            text-align: center;
+            text-align: center; /* 讓內容文字置中 */
         }
 
         .card {
@@ -316,7 +291,7 @@
             border-left: 4px solid var(--electric-blue);
             position: relative;
             overflow: hidden;
-            text-align: center; /* Center alignment for cards */
+            text-align: center;
         }
 
         .card:hover {
@@ -375,6 +350,112 @@
         .requirements li { color: var(--text-muted); margin-bottom: 5px; }
         .requirements li i { color: var(--electric-blue); width: 20px; }
 
+        /* --- BOOKING PAGE STYLES --- */
+        .booking-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-light);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .booking-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        .booking-container input[type="date"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .time-slot-btn {
+            background-color: white;
+            border: 1px solid var(--electric-blue);
+            color: var(--electric-blue);
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .time-slot-btn:hover {
+            background-color: var(--electric-blue);
+            color: white;
+        }
+
+        .time-slot-btn.active {
+            background-color: var(--racing-red);
+            border-color: var(--racing-red);
+            color: white;
+            box-shadow: 0 0 10px rgba(255, 24, 1, 0.4);
+        }
+
+        .booking-form {
+            text-align: left;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .booking-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .booking-form label {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .booking-form input[type="text"],
+        .booking-form input[type="tel"],
+        .booking-form input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            box-sizing: border-box;
+            background-color: white;
+        }
+
+        .booking-form button[type="submit"] {
+            width: auto;
+            margin-top: 20px;
+            transform: skewX(0deg); /* Remove skew for form button */
+        }
+        .booking-form button[type="submit"] span {
+            transform: skewX(0deg);
+        }
+
+
         /* --- FOOTER --- */
         footer {
             background: #f8f8f8;
@@ -387,10 +468,14 @@
         
         /* Responsive */
         @media (max-width: 900px) {
-            .nav-links { display: none; } 
+            .nav-links { display: none; } /* Hide nav on mobile for this demo */
             .hero h1 { font-size: 2rem; }
             .hero { height: 60vh; }
-            .grid-container, .values-container { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .values-container { grid-template-columns: 1fr; }
+            .booking-container input[type="date"] { max-width: 100%; }
         }
     </style>
 </head>
@@ -405,15 +490,10 @@
             <button class="nav-btn" onclick="showPage('exhibitions')">展覽活動</button>
             <button class="nav-btn" onclick="showPage('courses')">課程</button>
             <button class="nav-btn" onclick="showPage('contact')">聯絡我們</button>
+            <button class="nav-btn" onclick="showPage('booking')">預約體驗</button> <!-- NEW NAV BUTTON -->
             <button class="nav-btn download-nav" onclick="showPage('download')"><span><i class="fas fa-download"></i> 軟體下載</span></button>
         </div>
     </nav>
-
-    <!-- WHATSAPP FLOATING BUTTON -->
-    <!-- Assuming Hong Kong (+852) based on previous context. Replace link if country code differs. -->
-    <a href="https://wa.me/85255379080" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
 
     <!-- === SECTION: HOME === -->
     <section id="home" class="page-section active">
@@ -422,8 +502,8 @@
             <div class="slider-container">
                 <div class="slide active" style="background-image: url('images/P1.jpg');"></div>
                 <div class="slide" style="background-image: url('images/P2.jpg');"></div>
-                <!-- <div class="slide" style="background-image: url('images/banner3.jpg');"></div>
-                <div class="slide" style="background-image: url('images/banner4.jpg');"></div> -->
+                <div class="slide" style="background-image: url('images/banner3.jpg');"></div>
+                <div class="slide" style="background-image: url('images/banner4.jpg');"></div>
             </div>
 
             <!-- Arrows -->
@@ -547,33 +627,33 @@
 
             <div class="grid-container">
                 <div class="card">
-                    <div class="card-date">第一階段 </div>
-                    <h3>機械結構及組裝</h3>
-                    <p>理解電動車基礎物理與機械結構，導師示範底盤結構，學員分組進行避震系統、轉向系統及動力傳動系統的組裝，學習電壓/電流適配及電池安全，並進行初步的機電測試（確保輪胎轉動方向正確、結構穩固）。</p>
+                    <div class="card-date">汽車硬件拼裝學習</div>
+                    <h3>ERC 汽車組裝課程</h3>
+                    <p>讓學童從細分的硬件組合成一件可用及可行駛的汽車，從而啟發學生的動手製作能力及認識汽車結構。</p>
                     <span class="tag">Lego</span>
                     <span class="tag">動手實驗</span>
                 </div>
 
                 <div class="card">
-                    <div class="card-date">第二階段</div>
-                    <h3>核心編程與控制 </h3>
-                    <p>賦予車輛「大腦」，學習 Python/C++ 及 PID 控制算法，連接 PCB 電路板，編寫程式控制馬達轉速與伺服馬達 (Servo) 轉向，學員需透過編程解決「差速器」運作原理，並利用藍牙/Wifi 模組實現遙距通訊，測試車輛對指令的反應。</p>
+                    <div class="card-date">編程應用</div>
+                    <h3>Python與Wifi編程課程</h3>
+                    <p>為車輛編寫程式以實現所需的行進指令。學習從零開始編寫程式到車輛順利行駛的具體步驟。</p>
                     <span class="tag">編程</span>
                     <span class="tag">微控制器</span>
                 </div>
 
                 <div class="card">
-                    <div class="card-date">第三階段</div>
-                    <h3>3D 設計與外殼製作</h3>
-                    <p>工程美學與空氣動力學的實踐，使用 AutoCAD 或 Tinkercad 等軟件設計車殼，並利用 3D 打印機將作品實體化，導師指導如何優化風阻，學員現場打印並進行後製打磨，將車殼安裝至底盤。</p>
+                    <div class="card-date">實景模擬駕駛</div>
+                    <h3>汽車實景駕駛</h3>
+                    <p>建立真實道路場景，融入真實場景模擬（如交通燈、路口等）。透過VR眼鏡或投影進行顯示。</p>
                     <span class="tag">VR/AR</span>
                     <span class="tag">虛擬場景</span>
                 </div>
 
                 <div class="card">
-                    <div class="card-date">第四階段</div>
-                    <h3>A4 實戰測試與駕駛體驗及道路安全</h3>
-                    <p>成果驗收與駕駛技術，學習入門駕駛理論及道路交通規則，進行 VR 模擬駕駛與實體車操作，設置障礙賽道，進行計時賽或技巧賽，學員需利用車用檢測系統分析數據（Telemetric reality），修正編程以提升表現。</p>
+                    <div class="card-date">道路安全技能</div>
+                    <h3>實景操作與道路安全</h3>
+                    <p>在完整的模擬道路中實際操作 ERC 車輛。相關數據和畫面可即時呈現在駕駛者的控制器台上。</p>
                     <span class="tag">實景駕駛</span>
                     <span class="tag">遙控操作</span>
                 </div>
@@ -611,6 +691,50 @@
         </div>
     </section>
 
+    <!-- === SECTION: BOOKING (NEW) === -->
+    <section id="booking" class="page-section">
+        <div class="hero" style="height: 40vh;">
+            <div class="hero-content">
+                <h1>預約體驗</h1>
+                <p>選擇您方便的日期和時間，親身體驗 ERC 智能駕駛！</p>
+            </div>
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/banner1.jpg');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="booking-container">
+                <h2 style="color: var(--text-main); margin-bottom: 20px;">預約 ERC 體驗館時間</h2>
+                
+                <label for="booking-date">選擇日期：</label>
+                <input type="date" id="booking-date">
+
+                <h3 style="color: var(--electric-blue); margin-top: 30px; margin-bottom: 15px;">可預約時段 (上午10:00 - 下午5:00)</h3>
+                <div id="time-slots-grid" class="time-slots-grid">
+                    <!-- Time slots will be generated here by JavaScript -->
+                </div>
+
+                <form id="booking-form" class="booking-form" onsubmit="event.preventDefault(); submitBooking();">
+                    <h3 style="color: var(--text-main); margin-bottom: 20px;">您的聯絡資料</h3>
+                    <div class="form-group">
+                        <label for="booking-name">姓名：</label>
+                        <input type="text" id="booking-name" placeholder="請輸入您的姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-phone">電話：</label>
+                        <input type="tel" id="booking-phone" placeholder="請輸入您的電話號碼" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-email">電郵：</label>
+                        <input type="email" id="booking-email" placeholder="請輸入您的電郵地址" required>
+                    </div>
+                    <button type="submit" class="cta-button"><span>確認預約</span></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- === SECTION: DOWNLOAD === -->
     <section id="download" class="page-section">
         <div class="hero" style="height: 40vh;">
@@ -644,8 +768,7 @@
                 </div>
 
                 <!-- DOWNLOAD LINK -->
-                <!-- Change the href below to your actual file path. Adding target="_blank" opens the link in a new tab. -->
-                <a href="https://drive.google.com/file/d/1pPSq7irpVbjj8yRFcxqzQFPFOSOqwrGa/view?usp=sharing" class="cta-button" target="_blank">
+                <a href="#" class="cta-button" onclick="alert('Please add your file link in the HTML code!');">
                     <span><i class="fas fa-download"></i> 下載安裝程式 (.exe)</span>
                 </a>
                 
@@ -680,9 +803,18 @@
             if (selectedSection) selectedSection.classList.add('active');
 
             // Highlight nav button
+            // This finds the button whose onclick attribute contains the pageId
             const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
-            const matchingBtn = navButtons.find(btn => btn.getAttribute('onclick').includes(pageId));
+            const matchingBtn = navButtons.find(btn => {
+                const onclickAttr = btn.getAttribute('onclick');
+                return onclickAttr && onclickAttr.includes(pageId);
+            });
             if (matchingBtn) matchingBtn.classList.add('active');
+
+            // If navigating to the booking page, ensure slots are generated
+            if (pageId === 'booking') {
+                generateTimeSlots();
+            }
 
             // Scroll to top
             window.scrollTo(0, 0);
@@ -714,6 +846,7 @@
             autoSlideInterval = setInterval(() => changeSlide(1), 5000);
         }
 
+        // Start auto-slide only if there are slides on the home page
         if (totalSlides > 0) startAutoSlide();
 
         const arrows = document.querySelectorAll('.slider-arrow');
@@ -722,6 +855,113 @@
                 clearInterval(autoSlideInterval);
                 startAutoSlide();
             });
+        });
+
+        // --- BOOKING LOGIC (NEW) ---
+        let selectedBookingDate = '';
+        let selectedBookingTime = '';
+
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('time-slots-grid');
+            if (!timeSlotsContainer) return; // Ensure element exists
+
+            timeSlotsContainer.innerHTML = ''; // Clear previous slots
+
+            const startTimeMinutes = 10 * 60; // 10:00 AM in minutes
+            const endTimeMinutes = 17 * 60;   // 5:00 PM in minutes
+            const interval = 30;              // 30 minutes
+
+            for (let minutes = startTimeMinutes; minutes <= endTimeMinutes; minutes += interval) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+
+                const slotButton = document.createElement('button');
+                slotButton.classList.add('time-slot-btn');
+                slotButton.textContent = timeString;
+                slotButton.setAttribute('data-time', timeString);
+                slotButton.onclick = function() { selectTimeSlot(this); };
+                timeSlotsContainer.appendChild(slotButton);
+            }
+        }
+
+        function selectTimeSlot(button) {
+            // Remove active class from all other slots
+            const allSlots = document.querySelectorAll('.time-slot-btn');
+            allSlots.forEach(slot => slot.classList.remove('active'));
+
+            // Add active class to the clicked slot
+            button.classList.add('active');
+            selectedBookingTime = button.getAttribute('data-time');
+
+            // Update selected date if date input is used (should always be, but for safety)
+            const dateInput = document.getElementById('booking-date');
+            if (dateInput) {
+                selectedBookingDate = dateInput.value;
+            }
+        }
+
+        function submitBooking() {
+            const name = document.getElementById('booking-name').value;
+            const phone = document.getElementById('booking-phone').value;
+            const email = document.getElementById('booking-email').value;
+
+            if (!selectedBookingDate || !selectedBookingTime || !name || !phone || !email) {
+                alert('請填寫所有預約資訊並選擇時間！');
+                return;
+            }
+
+            alert(`預約成功！\n姓名: ${name}\n電話: ${phone}\n電郵: ${email}\n日期: ${selectedBookingDate}\n時間: ${selectedBookingTime}\n\n我們將盡快與您確認。`);
+
+            // --- IMPORTANT ---
+            // In a real application, you would send this data to a backend server
+            // via AJAX (fetch API) to store the appointment.
+            // Example:
+            // fetch('/api/book-appointment', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ name, phone, email, date: selectedBookingDate, time: selectedBookingTime })
+            // })
+            // .then(response => response.json())
+            // .then(data => console.log('Booking response:', data))
+            // .catch(error => console.error('Booking error:', error));
+
+            // Optionally reset form and selections after successful submission
+            document.getElementById('booking-form').reset();
+            selectedBookingDate = '';
+            selectedBookingTime = '';
+            const allSlots = document.querySelectorAll('.time-slot-btn');
+            allSlots.forEach(slot => slot.classList.remove('active'));
+        }
+
+        // Initialize date picker and time slots on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('booking-date');
+            if (dateInput) {
+                // Set today's date as default and minimum selectable date
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = (today.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+                const dd = today.getDate().toString().padStart(2, '0');
+                const todayString = `${yyyy}-${mm}-${dd}`;
+
+                dateInput.value = todayString;
+                selectedBookingDate = todayString; // Set initial selected date
+                dateInput.min = todayString; // Prevent selecting past dates
+
+                dateInput.addEventListener('change', (event) => {
+                    selectedBookingDate = event.target.value;
+                    // Clear selected time when date changes
+                    selectedBookingTime = '';
+                    const allSlots = document.querySelectorAll('.time-slot-btn');
+                    allSlots.forEach(slot => slot.classList.remove('active'));
+                    // Regenerate slots in case specific dates have different logic (though currently fixed 10-5)
+                    generateTimeSlots(); 
+                });
+            }
+
+            // Generate slots initially if the booking section is visible or about to be
+            // This is handled by showPage('booking')
         });
     </script>
 </body>
