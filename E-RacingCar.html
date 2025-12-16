@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERC 智能實景駕駛體驗館</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES (LIGHT THEME) --- */
+        :root {
+            --racing-red: #ff1801;
+            --electric-blue: #007cc7;
+            --bg-white: #ffffff;
+            --bg-light: #f4f6f8;
+            --text-main: #1a1a1a;
+            --text-muted: #555555;
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Noto Sans TC', sans-serif;
+            --whatsapp-green: #25d366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-white);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--racing-red);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-style: italic;
+        }
+
+        .logo span { color: var(--racing-red); }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            padding: 5px 10px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--racing-red);
+        }
+
+        .download-nav {
+            background-color: var(--racing-red);
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 4px;
+            transform: skewX(-15deg);
+        }
+        
+        .download-nav span { display: inline-block; transform: skewX(15deg); }
+        .download-nav:hover { 
+            background-color: var(--text-main); 
+            color: white; 
+        }
+
+        /* --- WHATSAPP FLOATING BUTTON --- */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--whatsapp-green);
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 2000; /* High z-index to sit on top of everything */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 15px rgba(0,0,0,0.3);
+            background-color: #1ebd57;
+        }
+
+        /* --- PAGE CONTENT HANDLING --- */
+        .page-section {
+            display: none;
+            padding-top: 80px; 
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HERO SLIDER STYLES --- */
+        .hero {
+            position: relative;
+            padding: 0;
+            height: 85vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #ffffff; 
+        }
+
+        .slider-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+        }
+
+        .slide.active { opacity: 1; }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid white;
+            font-size: 24px;
+            padding: 15px 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .slider-arrow:hover {
+            background: white;
+            color: black;
+        }
+
+        .prev { left: 30px; }
+        .next { right: 30px; }
+
+        /* --- BUTTONS --- */
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--racing-red);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 2px solid var(--racing-red);
+            transition: 0.3s;
+            transform: skewX(-15deg);
+            cursor: pointer;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button span { display: inline-block; transform: skewX(15deg); }
+        .cta-button:hover {
+            background: white;
+            color: var(--racing-red);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border-color: white;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background: white;
+            color: var(--text-main);
+            border-color: white;
+        }
+
+        /* --- CARDS & GRID --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        /* 課程專用：雙欄 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 兩欄 */
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        /* 首頁核心價值專用：三欄 */
+        .values-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--electric-blue);
+            position: relative;
+            overflow: hidden;
+            text-align: center; /* Center alignment for cards */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: var(--electric-blue);
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+        }
+        
+        .card-date {
+            color: var(--racing-red);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: rgba(0, 124, 199, 0.1);
+            color: var(--electric-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+            margin-right: 5px;
+        }
+
+        /* --- DOWNLOAD SECTION --- */
+        .download-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-light);
+            padding: 50px;
+            border-top: 5px solid var(--racing-red);
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .requirements {
+            text-align: left;
+            background: white;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .requirements h4 { margin-bottom: 10px; }
+        .requirements ul { list-style: none; padding-left: 0; }
+        .requirements li { color: var(--text-muted); margin-bottom: 5px; }
+        .requirements li i { color: var(--electric-blue); width: 20px; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #f8f8f8;
+            text-align: center;
+            padding: 40px;
+            margin-top: 50px;
+            border-top: 1px solid #e0e0e0;
+            color: var(--text-muted);
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .nav-links { display: none; } 
+            .hero h1 { font-size: 2rem; }
+            .hero { height: 60vh; }
+            .grid-container, .values-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo">ERC <span>Project</span></div>
+        <div class="nav-links">
+            <button class="nav-btn active" onclick="showPage('home')">首頁</button>
+            <button class="nav-btn" onclick="showPage('about')">關於 ERC</button>
+            <button class="nav-btn" onclick="showPage('exhibitions')">展覽活動</button>
+            <button class="nav-btn" onclick="showPage('courses')">課程</button>
+            <button class="nav-btn" onclick="showPage('contact')">聯絡我們</button>
+            <button class="nav-btn download-nav" onclick="showPage('download')"><span><i class="fas fa-download"></i> 軟體下載</span></button>
+        </div>
+    </nav>
+
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <!-- Assuming Hong Kong (+852) based on previous context. Replace link if country code differs. -->
+    <a href="https://wa.me/85255379080" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- === SECTION: HOME === -->
+    <section id="home" class="page-section active">
+        <div class="hero">
+            <!-- Background Slider Container (4 Images) -->
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/P1.jpg');"></div>
+                <div class="slide" style="background-image: url('images/P2.jpg');"></div>
+                <!-- <div class="slide" style="background-image: url('images/banner3.jpg');"></div>
+                <div class="slide" style="background-image: url('images/banner4.jpg');"></div> -->
+            </div>
+
+            <!-- Arrows -->
+            <button class="slider-arrow prev" onclick="changeSlide(-1)">&#10094;</button>
+            <button class="slider-arrow next" onclick="changeSlide(1)">&#10095;</button>
+
+            <!-- Text Content -->
+            <div class="hero-content">
+                <h1>智能實景駕駛 · <span style="color:var(--racing-red)">安全學習新體驗</span></h1>
+                <p>結合虛擬實景、人工智能與電動車技術，創新的 STEM 教育方案</p>
+                <div style="margin-top: 30px;">
+                    <button class="cta-button" onclick="showPage('courses')"><span>查看課程</span></button>
+                    <button class="cta-button btn-secondary" onclick="showPage('contact')"><span>聯絡我們</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="section-header">
+                <h2>核心價值</h2>
+                <p>ERC 致力於讓學生在安全、可重複的虛擬環境中學習駕駛技能</p>
+            </div>
+            
+            <div class="values-container">
+                <div class="card">
+                    <h3><i class="fas fa-graduation-cap"></i> 教育創新</h3>
+                    <p>結合 VR、AI 與實景技術的智能教學方案。</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-microchip"></i> 科技卓越</h3>
+                    <p>提供最新的硬體與軟體整合解決方案。</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> 持續創新</h3>
+                    <p>不斷探索 STEM 與實景駕駛的新可能。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === SECTION: ABOUT === -->
+    <section id="about" class="page-section">
+        <div class="hero" style="height: 40vh;">
+            <div class="hero-content">
+                <h1>關於 ERC</h1>
+                <p>智能實景駕駛體驗館與德安駕駛學校合作</p>
+            </div>
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/banner2.jpg');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto; background: var(--bg-light); padding: 40px; border-radius: 8px;">
+                <h3 style="color: var(--electric-blue); margin-bottom: 20px;">我們的使命</h3>
+                <p style="margin-bottom: 20px;">ERC 智能實景駕駛體驗館由教育及駕駛訓練專家共同策劃，結合虛擬實景（VR）、人工智能（AI）、電動車（EV）及遙感現實（TR）技術，為香港提供首創的智能駕駛教育平台。</p>
+                <p>透過科技創新，讓每位學生都能享受安全、高效且富有啟發性的駕駛學習體驗，培育具備道路安全意識和 STEM 技能的未來人才。</p>
+                
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+                
+                <h3 style="color: var(--text-main); margin-bottom: 10px;">德安駕駛學校有限公司</h3>
+                <p style="color: var(--text-muted);">德安駕駛學校是香港四大駕駛學校之一，擁有超過 30 部教練車（私家車、輕型貨車、巴士、貨車），每年培訓超過 2,000 名學生，擁有超過 30 名資深駕駛教練。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === SECTION: EXHIBITIONS === -->
+    <section id="exhibitions" class="page-section">
+        <div class="hero" style="height: 40vh;">
+            <div class="hero-content">
+                <h1>展覽及推廣活動</h1>
+                <p>ERC 已於多個大型活動中展出智能實景駕駛體驗</p>
+            </div>
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/banner3.jpg');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="grid-container">
+                <div class="card">
+                    <div class="card-date">2025年 8月 22–24日</div>
+                    <h3>香港運動節 2025</h3>
+                    <p>設置智能實景駕駛體驗區，讓參加者以模擬實景方式了解安全駕駛及道路風險管理。</p>
+                    <div class="tags">
+                        <span class="tag">運動節</span>
+                        <span class="tag">體驗展示</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-date">2025年 11月 21–23日</div>
+                    <h3>香港戶外用品及運動博覽 2025</h3>
+                    <p>展示駕駛模擬技術如何應用於教育及安全訓練，結合戶外及運動主題展示創新科技。</p>
+                    <div class="tags">
+                        <span class="tag">運動博覽</span>
+                        <span class="tag">科技展示</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === SECTION: COURSES === -->
+    <section id="courses" class="page-section">
+        <div class="hero" style="height: 40vh;">
+            <div class="hero-content">
+                <h1>ERC STEM 課程</h1>
+                <p>為小學生、初中生、家長和學校老師提供的智能實景駕駛學習體驗</p>
+            </div>
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/banner1.jpg');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="section-header">
+                <h2>四大課程模組</h2>
+                <p>循序漸進的 STEM 學習路徑</p>
+            </div>
+
+            <div class="grid-container">
+                <div class="card">
+                    <div class="card-date">第一階段 </div>
+                    <h3>機械結構及組裝</h3>
+                    <p>理解電動車基礎物理與機械結構，導師示範底盤結構，學員分組進行避震系統、轉向系統及動力傳動系統的組裝，學習電壓/電流適配及電池安全，並進行初步的機電測試（確保輪胎轉動方向正確、結構穩固）。</p>
+                    <span class="tag">Lego</span>
+                    <span class="tag">動手實驗</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-date">第二階段</div>
+                    <h3>核心編程與控制 </h3>
+                    <p>賦予車輛「大腦」，學習 Python/C++ 及 PID 控制算法，連接 PCB 電路板，編寫程式控制馬達轉速與伺服馬達 (Servo) 轉向，學員需透過編程解決「差速器」運作原理，並利用藍牙/Wifi 模組實現遙距通訊，測試車輛對指令的反應。</p>
+                    <span class="tag">編程</span>
+                    <span class="tag">微控制器</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-date">第三階段</div>
+                    <h3>3D 設計與外殼製作</h3>
+                    <p>工程美學與空氣動力學的實踐，使用 AutoCAD 或 Tinkercad 等軟件設計車殼，並利用 3D 打印機將作品實體化，導師指導如何優化風阻，學員現場打印並進行後製打磨，將車殼安裝至底盤。</p>
+                    <span class="tag">VR/AR</span>
+                    <span class="tag">虛擬場景</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-date">第四階段</div>
+                    <h3>A4 實戰測試與駕駛體驗及道路安全</h3>
+                    <p>成果驗收與駕駛技術，學習入門駕駛理論及道路交通規則，進行 VR 模擬駕駛與實體車操作，設置障礙賽道，進行計時賽或技巧賽，學員需利用車用檢測系統分析數據（Telemetric reality），修正編程以提升表現。</p>
+                    <span class="tag">實景駕駛</span>
+                    <span class="tag">遙控操作</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === SECTION: CONTACT === -->
+    <section id="contact" class="page-section">
+        <div class="hero" style="height: 40vh;">
+            <div class="hero-content">
+                <h1>聯絡我們</h1>
+                <p>歡迎蒞臨體驗智能實景駕駛模擬系統</p>
+            </div>
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/banner4.jpg');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="grid-container" style="max-width: 900px; margin: 0 auto;">
+                <div class="card">
+                    <h3><i class="fas fa-map-marker-alt"></i> 德安駕駛學校</h3>
+                    <p><strong>地址：</strong>香港 - 金鐘金鐘道 95 號 統一中心 2 樓 2013 號舖<br><small>（港鐵金鐘站 D 出口）</small></p>
+                    <p style="margin-top:15px;"><strong>電話：</strong> 2527 7799</p>
+                    <p><strong>WhatsApp：</strong> 9173 4677</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-vr-cardboard"></i> ERC 體驗館</h3>
+                    <p><strong>地址：</strong>九龍 - 九龍灣臨興街 21 號 美羅中心二期 17 樓 15 室</p>
+                    <p style="margin-top:15px; color: var(--electric-blue);">歡迎預約參觀</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === SECTION: DOWNLOAD === -->
+    <section id="download" class="page-section">
+        <div class="hero" style="height: 40vh;">
+            <div class="hero-content">
+                <h1>駕駛軟體下載</h1>
+                <p>Download the host application to connect your wheel to the car.</p>
+            </div>
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('images/banner2.jpg');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="download-container">
+                <i class="fas fa-box-open" style="font-size: 4rem; color: var(--racing-red); margin-bottom: 20px;"></i>
+                <h2 style="margin-bottom: 10px;">ERC Host Controller</h2>
+                <span style="background:var(--electric-blue); color:white; padding:3px 8px; border-radius:4px; font-size:0.9rem;">Version 1.2.0 (Stable)</span>
+                
+                <p style="margin-top: 20px; color: var(--text-muted);">
+                    此軟體作為 PC 與 ERC 車輛之間的橋樑，負責處理輸入映射、WiFi 連接和遙測顯示。
+                </p>
+
+                <div class="requirements">
+                    <h4><i class="fas fa-cogs"></i> 系統需求</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Windows 10 / 11 (64-bit)</li>
+                        <li><i class="fas fa-check"></i> 已安裝 Logitech G-Hub</li>
+                        <li><i class="fas fa-check"></i> WiFi 接收器 (需支援 2.4GHz)</li>
+                        <li><i class="fas fa-check"></i> .NET Framework 4.8 或更高版本</li>
+                    </ul>
+                </div>
+
+                <!-- DOWNLOAD LINK -->
+                <!-- Change the href below to your actual file path. Adding target="_blank" opens the link in a new tab. -->
+                <a href="https://drive.google.com/file/d/1pPSq7irpVbjj8yRFcxqzQFPFOSOqwrGa/view?usp=sharing" class="cta-button" target="_blank">
+                    <span><i class="fas fa-download"></i> 下載安裝程式 (.exe)</span>
+                </a>
+                
+                <div style="margin-top: 20px; font-size: 0.8rem; color: #888;">
+                    SHA-256: 8A2F... | 大小: 45MB
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="logo" style="font-size: 1.2rem; margin-bottom: 20px;">ERC <span>Project</span></div>
+        <p>&copy; 2025 ERC 智能實景駕駛體驗館 · 德安駕駛學校有限公司</p>
+        <p>智能駕駛體驗 | STEM 教育創新 | 安全駕駛培訓</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- PAGE NAVIGATION LOGIC ---
+        function showPage(pageId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Remove active class from nav buttons
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected section
+            const selectedSection = document.getElementById(pageId);
+            if (selectedSection) selectedSection.classList.add('active');
+
+            // Highlight nav button
+            const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
+            const matchingBtn = navButtons.find(btn => btn.getAttribute('onclick').includes(pageId));
+            if (matchingBtn) matchingBtn.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // --- SLIDER LOGIC ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('#home .slide'); // Only target home slides
+        const totalSlides = slides.length;
+        let autoSlideInterval;
+
+        function changeSlide(direction) {
+            if (slides.length === 0) return;
+
+            slides[currentSlide].classList.remove('active');
+            
+            currentSlide = currentSlide + direction;
+            
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+            
+            slides[currentSlide].classList.add('active');
+        }
+
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => changeSlide(1), 5000);
+        }
+
+        if (totalSlides > 0) startAutoSlide();
+
+        const arrows = document.querySelectorAll('.slider-arrow');
+        arrows.forEach(arrow => {
+            arrow.addEventListener('click', () => {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            });
+        });
+    </script>
+</body>
+</html>
