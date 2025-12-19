@@ -18,9 +18,9 @@
             --bg-light: #f4f6f8;
             --text-main: #1a1a1a;
             --text-muted: #555555;
-            /* Added Noto Sans TC for better Chinese rendering */
             --font-display: 'Orbitron', sans-serif;
             --font-body: 'Noto Sans TC', sans-serif;
+            --whatsapp-green: #25d366;
         }
 
         * {
@@ -53,17 +53,22 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .logo {
-            font-family: var(--font-display);
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--text-main);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-style: italic;
+        /* 舊的 .logo 樣式已移除，現在 Logo 由圖片控制 */
+        .logo-link {
+            display: flex; /* 確保圖片能正確顯示 */
+            align-items: center;
+            text-decoration: none; /* 移除連結下劃線 */
+        }
+        
+        .logo-img {
+            height: 45px; /* 設定您的 Logo 圖片高度 */
+            width: auto; /* 保持圖片比例 */
+            transition: transform 0.3s ease;
         }
 
-        .logo span { color: var(--racing-red); }
+        .logo-img:hover {
+            transform: scale(1.05); /* 鼠標懸停時稍微放大 */
+        }
 
         .nav-links {
             display: flex;
@@ -98,6 +103,44 @@
         .download-nav:hover { 
             background-color: var(--text-main); 
             color: white; 
+        }
+
+        /* Mobile menu toggle button (hidden by default) */
+        .menu-toggle {
+            display: none; /* Hidden by default on desktop */
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            cursor: pointer;
+            z-index: 1001; 
+        }
+
+        /* --- WHATSAPP FLOATING BUTTON --- */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--whatsapp-green);
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 2000; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 15px rgba(0,0,0,0.3);
+            background-color: #1ebd57;
         }
 
         /* --- PAGE CONTENT HANDLING --- */
@@ -242,7 +285,7 @@
             border-color: white;
         }
 
-        /* --- CARDS & GRID --- */
+        /* --- CONTAINER & CARDS --- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -260,26 +303,53 @@
             margin-bottom: 15px;
         }
 
+        /* 課程專用：雙欄 (1fr 1fr) */
         .grid-container {
             display: grid;
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: 1fr 1fr;
             gap: 30px;
-
             max-width: 900px;
             margin: 0 auto;
-
             align-items: start;
         }
 
-        /* 首頁核心價值專用：強制三欄 */
+        .split-container {
+            display: flex;           /* 開啟並排 */
+            align-items: center;     /* 垂直置中 */
+            gap: 40px;               /* 圖文間距 */
+            margin-bottom: 50px;     /* 每一大行之間的距離 */
+        }
+
+        .split-container:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+
+        .split-image,
+        .split-text {
+            flex: 1;                 /* 兩個區塊平分空間 (1:1) */
+            min-width: 0;
+        }
+        .split-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .split-container:nth-child(even) {
+        flex-direction: row-reverse;
+        }
+
+
+        /* 首頁核心價值專用：三欄 (3, 1fr) */
         .values-container {
             display: grid;
-            /* repeat(3, 1fr) 代表分為三個等寬的欄位 */
             grid-template-columns: repeat(3, 1fr); 
             gap: 25px;
-            max-width: 1200px; /* 寬度設寬一點，容納三個方塊 */
+            max-width: 1200px;
             margin: 0 auto;
-            text-align: center; /* 讓內容文字置中 */
+            text-align: center;
         }
 
         .card {
@@ -311,6 +381,26 @@
             font-weight: bold;
             margin-bottom: 10px;
             display: block;
+        }
+
+
+
+        .event div{
+            width: 300px;
+            text-align: center;
+        }
+
+        .event img{
+            width: 50%;
+            border-radius: 10px;
+        }
+
+        .einfo {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         .tag {
@@ -465,17 +555,127 @@
             border-top: 1px solid #e0e0e0;
             color: var(--text-muted);
         }
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .social-links a {
+            color: var(--text-muted);
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        .social-links a:hover {
+            color: var(--electric-blue);
+        }
         
         /* Responsive */
         @media (max-width: 900px) {
-            .nav-links { display: none; } /* Hide nav on mobile for this demo */
+            /* Navigation adjustments for mobile */
+            nav {
+                padding: 15px 20px; /* Adjust nav padding */
+                flex-wrap: wrap; /* Allow elements to wrap */
+            }
+            .nav-links {
+                display: none; /* Hide nav links by default on mobile */
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px; /* Position below the main nav bar */
+                left: 0;
+                background: rgba(255, 255, 255, 0.98);
+                border-top: 1px solid #eee;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                padding: 10px 0;
+                z-index: 999;
+                max-height: calc(100vh - 70px);
+                overflow-y: auto; /* Enable scrolling for long menus */
+            }
+            .nav-links.open {
+                display: flex; /* Show menu when 'open' class is applied */
+            }
+            .nav-links .nav-btn {
+                width: 100%;
+                text-align: left;
+                padding: 12px 20px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .nav-links .nav-btn:last-child {
+                border-bottom: none;
+            }
+            .menu-toggle {
+                display: block; /* Show hamburger icon on mobile */
+            }
+
+            /* General page adjustments */
             .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; margin: 0 auto 20px auto; }
             .hero { height: 60vh; }
+            .cta-button, .btn-secondary {
+                display: block; /* Make buttons stack vertically */
+                width: calc(100% - 40px); /* Full width minus container padding */
+                margin: 10px auto; /* Center buttons and add vertical spacing */
+                transform: skewX(0deg); /* Remove skew for better readability */
+                text-align: center;
+                padding: 12px 20px;
+            }
+            .cta-button span { transform: skewX(0deg); } /* Remove skew from span content */
+            .btn-secondary { margin-left: auto; margin-right: auto; } /* Ensure secondary button centers */
+            
+            /* Grid containers now always stack on mobile */
+            .grid-container, .values-container {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px; /* Reduce general container padding */
+            }
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            .section-header p {
+                font-size: 1rem;
+            }
+            .download-nav { /* Ensure download nav button also removes skew */
+                transform: skewX(0deg);
+            }
+            .download-nav span {
+                transform: skewX(0deg);
+            }
         }
+
+        /* Further adjustments for very small phone screens */
+        @media (max-width: 480px) {
+            nav { padding: 10px 15px; }
+            .logo-img { height: 35px; } /* Smaller logo on very small screens */
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 0.9rem; }
+            .cta-button, .btn-secondary {
+                font-size: 1rem;
+                padding: 10px 15px;
+            }
+            .slider-arrow {
+                padding: 8px 12px;
+                font-size: 18px;
+                left: 10px;
+                right: 10px;
+            }
+            .hero-content {
+                padding: 10px;
+            }
+            footer {
+                padding: 20px;
+                font-size: 0.8rem;
+            }
+            .social-links a {
+                font-size: 1.2rem;
+                margin: 0 5px;
+            }
+        }
+
+        /* Hide slider arrows on mobile screens */
         @media (max-width: 768px) {
-            .grid-container { grid-template-columns: 1fr; }
-            .values-container { grid-template-columns: 1fr; }
-            .booking-container input[type="date"] { max-width: 100%; }
+            .slider-arrow { display: none; } /* NEW: Hide slider arrows on small screens */
         }
     </style>
 </head>
@@ -483,17 +683,31 @@
 
     <!-- NAVIGATION -->
     <nav>
-        <div class="logo">ERC <span>Project</span></div>
-        <div class="nav-links">
+        <!-- Updated Logo Link with Image -->
+        <a href="#" class="logo-link" onclick="showPage('home')">
+            <img src="images/logo.png" alt="ERC Logo" class="logo-img">
+            <!-- If you still want text next to the image, uncomment the line below -->
+            <!-- <span class="logo-text">ERC Project</span> -->
+        </a>
+        <button class="menu-toggle" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="mobile-nav-links">
             <button class="nav-btn active" onclick="showPage('home')">首頁</button>
-            <button class="nav-btn" onclick="showPage('about')">關於 ERC</button>
             <button class="nav-btn" onclick="showPage('exhibitions')">展覽活動</button>
             <button class="nav-btn" onclick="showPage('courses')">課程</button>
+            <button class="nav-btn" onclick="showPage('about')">關於 ERC</button>
+            <button class="nav-btn" onclick="showPage('booking')">預約體驗</button> 
             <button class="nav-btn" onclick="showPage('contact')">聯絡我們</button>
-            <button class="nav-btn" onclick="showPage('booking')">預約體驗</button> <!-- NEW NAV BUTTON -->
+             <!-- NEW NAV BUTTON -->
             <button class="nav-btn download-nav" onclick="showPage('download')"><span><i class="fas fa-download"></i> 軟體下載</span></button>
         </div>
     </nav>
+
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <a href="https://wa.me/85296061079" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <!-- === SECTION: HOME === -->
     <section id="home" class="page-section active">
@@ -524,7 +738,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>核心價值</h2>
-                <p>ERC 致力於讓學生在安全、可重複的虛擬環境中學習駕駛技能</p>
+                <p>ERC 是一個以智能駕駛體驗的一個品牌，集合四大科技元素，EV，VR，AI及TR。這技術由一班PolyU 數據科學及人工智能系的學生自家研發創立。而這項體驗由配備第一人稱視角(First-person view)鏡頭的模型電動車(EV)，將專屬不同賽道畫面，實時傳送到模擬駕駛艙的虛擬實境(VR)眼鏡中，使參加者可於模型駕駛艙中，運用軚盤及腳踏板親手操控賽車，感受每一個轉向和加速，體驗腎上腺素飆升的快感 !</p>
             </div>
             
             <div class="values-container">
@@ -538,7 +752,7 @@
                 </div>
                 <div class="card">
                     <h3><i class="fas fa-lightbulb"></i> 持續創新</h3>
-                    <p>不斷探索 STEM 與實景駕駛的新可能。</p>
+                    <p>實現安全智能駕駛及無人駕駛方案。</p>
                 </div>
             </div>
         </div>
@@ -552,7 +766,7 @@
                 <p>智能實景駕駛體驗館與德安駕駛學校合作</p>
             </div>
             <div class="slider-container">
-                <div class="slide active" style="background-image: url('images/banner2.jpg');"></div>
+                <div class="slide active" style="background-image: url('images/car.png');"></div>
             </div>
         </div>
 
@@ -565,7 +779,15 @@
                 <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
                 
                 <h3 style="color: var(--text-main); margin-bottom: 10px;">德安駕駛學校有限公司</h3>
-                <p style="color: var(--text-muted);">德安駕駛學校是香港四大駕駛學校之一，擁有超過 30 部教練車（私家車、輕型貨車、巴士、貨車），每年培訓超過 2,000 名學生，擁有超過 30 名資深駕駛教練。</p>
+                <p style="margin-bottom: 20px;">德安駕駛學校 - 由林秉德先生於 1970 年成立，已有五十多年歷史，以道路交通安全，培訓良好駕駛者為目標。致力為市民提供不同的駕駛課程，全面協助學員掌握駕駛的技巧並完成駕駛考試。​</p>
+		    <p style="margin-bottom: 20px;">近年更與 香港善導會 合作，為更新人仕提供輕型貨車及的士課程，讓他們有機會習一技旁身，以裝備他們重投社會工作。在2023年1月香港社會服務聯會頒贈「商界展關懷」計劃標誌，以表揚本校對關懷社區、關懷員工及關懷環境的承擔。​</p>
+		    <p><b>公司規模及現況 :​</b></p>
+		    <ul>
+			    <li>全港四大駕駛學校之一​</li>
+			    <li>私家車，輕型貨車，巴士，貨車共超過30部​</li>
+			    <li>每年教導超過2000個學生​</li>
+			    <li>師傅人數超過30人</li>
+		    </ul>
             </div>
         </div>
     </section>
@@ -574,33 +796,52 @@
     <section id="exhibitions" class="page-section">
         <div class="hero" style="height: 40vh;">
             <div class="hero-content">
-                <h1>展覽及推廣活動</h1>
+                <h1>展覽及體驗活動</h1>
                 <p>ERC 已於多個大型活動中展出智能實景駕駛體驗</p>
             </div>
             <div class="slider-container">
-                <div class="slide active" style="background-image: url('images/banner3.jpg');"></div>
+                <div class="slide active" style="background-image: url('images/exhibit.png');"></div>
             </div>
         </div>
 
-        <div class="container">
-            <div class="grid-container">
-                <div class="card">
-                    <div class="card-date">2025年 8月 22–24日</div>
-                    <h3>香港運動節 2025</h3>
-                    <p>設置智能實景駕駛體驗區，讓參加者以模擬實景方式了解安全駕駛及道路風險管理。</p>
+        <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 40px 20px;">
+            <div class="split-container">
+                <div class="split-image">
+                    <img src="images/e3.jpg" alt="蘇浙公學" >
+                </div>
+                <div class="split-text">
+                    <h3>2025年 11月 30日<br>蘇浙公學(北角)開放日</h3>
+                    <p>ERC 將STEM 教育帶入校園，讓學生親手操控結合 AI 與 VR 技術的模型電動車，在安全環境中提早認識道路安全、機械結構與程式邏輯。這不僅是一場駕駛體驗，更是一堂啟發未來科技視野的實踐課。</p>
                     <div class="tags">
-                        <span class="tag">運動節</span>
-                        <span class="tag">體驗展示</span>
+                        <span class="tag">趣味導向</span>
+                        <span class="tag">走進校園</span>
+                        <span class="tag">開放日</span>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-date">2025年 11月 21–23日</div>
-                    <h3>香港戶外用品及運動博覽 2025</h3>
+            </div>
+            <div class="split-container">
+                <div class="split-image">
+                    <img src="images/e2.jpg" alt="香港戶外用品及運動博覽" >
+                </div>
+                <div class="split-text">
+                    <h3>2025年 11月 21–23日<br>香港戶外用品及運動博覽 2025</h3>
                     <p>展示駕駛模擬技術如何應用於教育及安全訓練，結合戶外及運動主題展示創新科技。</p>
                     <div class="tags">
                         <span class="tag">運動博覽</span>
                         <span class="tag">科技展示</span>
+                    </div>
+                </div>
+            </div>
+            <div class="split-container">
+                <div class="split-image">
+                    <img src="images/e1.jpg" alt="香港運動節" >
+                </div>
+                <div class="split-text">
+                    <h3>2025年 8月 22–24日<br>香港運動節 2025</h3>
+                    <p>設置智能實景駕駛體驗區，讓參加者以模擬實景方式了解安全駕駛及道路風險管理。</p>
+                    <div class="tags">
+                        <span class="tag">運動節</span>
+                        <span class="tag">體驗展示</span>
                     </div>
                 </div>
             </div>
@@ -615,7 +856,7 @@
                 <p>為小學生、初中生、家長和學校老師提供的智能實景駕駛學習體驗</p>
             </div>
             <div class="slider-container">
-                <div class="slide active" style="background-image: url('images/banner1.jpg');"></div>
+                <div class="slide active" style="background-image: url('images/course.png');"></div>
             </div>
         </div>
 
@@ -628,32 +869,32 @@
             <div class="grid-container">
                 <div class="card">
                     <div class="card-date">汽車硬件拼裝學習</div>
-                    <h3>ERC 汽車組裝課程</h3>
-                    <p>讓學童從細分的硬件組合成一件可用及可行駛的汽車，從而啟發學生的動手製作能力及認識汽車結構。</p>
+                    <h3>A1 – Lego ERC課程​ <br>(硬件體驗學習)</h3>
+                    <p>讓學童可以從細分的硬件組合成一件可用及可行駛的汽車，從而啟發學生的動手製作能力及認識汽車結構。​</p>
                     <span class="tag">Lego</span>
                     <span class="tag">動手實驗</span>
                 </div>
 
                 <div class="card">
                     <div class="card-date">編程應用</div>
-                    <h3>Python與Wifi編程課程</h3>
-                    <p>為車輛編寫程式以實現所需的行進指令。學習從零開始編寫程式到車輛順利行駛的具體步驟。</p>
+                    <h3>A2 – Microcontroller ERC課程​ <br>(編程應用程式及使用學習)</h3>
+                    <p>在完成硬體汽車製作後，需為車輛編寫程式以實現所需的行進指令。同時，向學生講解從零開始編寫程式到車輛順利行駛的具體步驟，並介紹如何透過程式設計實現轉彎、前進、後退等功能的數據處理方式。​</p>
                     <span class="tag">編程</span>
                     <span class="tag">微控制器</span>
                 </div>
 
                 <div class="card">
                     <div class="card-date">實景模擬駕駛</div>
-                    <h3>汽車實景駕駛</h3>
-                    <p>建立真實道路場景，融入真實場景模擬（如交通燈、路口等）。透過VR眼鏡或投影進行顯示。</p>
+                    <h3>A3 – Cospaces VR/AR​ <br>(實景視像模擬鏡頭操作及運用)</h3>
+                    <p>要將駕駛的所有工序從虛擬場景轉化為實際操作，可以採用虛擬眼鏡或3D實景牆式投影螢幕進行顯示。車輛在實際場地行進時，相關數據和畫面可即時呈現在駕駛者的控制器台上，讓駕駛者透過類似遙控機器人的操作方式，直接操控車輛。​</p>
                     <span class="tag">VR/AR</span>
                     <span class="tag">虛擬場景</span>
                 </div>
 
                 <div class="card">
                     <div class="card-date">道路安全技能</div>
-                    <h3>實景操作與道路安全</h3>
-                    <p>在完整的模擬道路中實際操作 ERC 車輛。相關數據和畫面可即時呈現在駕駛者的控制器台上。</p>
+                    <h3>A4 - 實景操作及教育道路安全常識​</h3>
+                    <p>在車輛行進的路面設計中，可融入真實場景模擬，例如交通燈、路口、迴旋處等，讓學習者根據實際道路規定進行安全操作。這能有效提升學生對交通標誌和指示的敏感度，進一步增強道路安全意識。​</p>
                     <span class="tag">實景駕駛</span>
                     <span class="tag">遙控操作</span>
                 </div>
@@ -669,7 +910,7 @@
                 <p>歡迎蒞臨體驗智能實景駕駛模擬系統</p>
             </div>
             <div class="slider-container">
-                <div class="slide active" style="background-image: url('images/banner4.jpg');"></div>
+                <div class="slide active" style="background-image: url('images/contact.png');"></div>
             </div>
         </div>
 
@@ -677,15 +918,19 @@
             <div class="grid-container" style="max-width: 900px; margin: 0 auto;">
                 <div class="card">
                     <h3><i class="fas fa-map-marker-alt"></i> 德安駕駛學校</h3>
-                    <p><strong>地址：</strong>香港 - 金鐘金鐘道 95 號 統一中心 2 樓 2013 號舖<br><small>（港鐵金鐘站 D 出口）</small></p>
+                    <p><strong>地址：</strong>香港 - 金鐘金鐘道 95 號 </p>
+			<p>統一中心 2 樓 2013 號舖<br><small>（港鐵金鐘站 D 出口）</small></p>
                     <p style="margin-top:15px;"><strong>電話：</strong> 2527 7799</p>
                     <p><strong>WhatsApp：</strong> 9173 4677</p>
                 </div>
 
                 <div class="card">
                     <h3><i class="fas fa-vr-cardboard"></i> ERC 體驗館</h3>
-                    <p><strong>地址：</strong>九龍 - 九龍灣臨興街 21 號 美羅中心二期 17 樓 15 室</p>
+                    <p><strong>地址：</strong>九龍 - 九龍灣臨興街 21 號</p>
+			<p>美羅中心二期 17 樓 15 室</p>
                     <p style="margin-top:15px; color: var(--electric-blue);">歡迎預約參觀</p>
+                    <p style="margin-top:15px;"><strong>電話：</strong> 9606 1079</p>
+                    <p><strong>WhatsApp：</strong> 9606 1079</p>
                 </div>
             </div>
         </div>
