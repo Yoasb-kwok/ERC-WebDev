@@ -1153,16 +1153,20 @@
     }
 
     // --- SUBMIT BOOKING (WRITE TO FIREBASE) ---
+    // --- SUBMIT BOOKING & HANDOFF TO WHATSAPP ---
     window.submitBooking = async function() {
+        // 1. Get User Input
         const name = document.getElementById('booking-name').value;
         const phone = document.getElementById('booking-phone').value;
         const email = document.getElementById('booking-email').value;
 
+        // Validation
         if (!selectedBookingDate || !selectedBookingTime || !name || !phone || !email) {
             alert('請填寫所有預約資訊並選擇時間！');
             return;
         }
 
+        // Disable button to prevent double-clicks
         const submitBtn = document.querySelector('.booking-form button[type="submit"]');
         if(submitBtn) {
             submitBtn.disabled = true;
@@ -1170,27 +1174,48 @@
         }
 
         try {
-            // Write to Firestore
+            // 2. Save to Firebase (This is your Database Backup)
             await addDoc(collection(db, "bookings"), {
                 name: name,
                 phone: phone,
                 email: email,
                 date: selectedBookingDate,
                 time: selectedBookingTime,
-                created_at: serverTimestamp()
+                created_at: serverTimestamp() // Adds the server time
             });
 
-            alert(`預約成功！\n我們將發送確認電郵至: ${email}`);
+            // 3. Construct the WhatsApp Message
+            // We use \n for line breaks.
+            const waMessage = 
+                `你好 ERC，我想預約體驗。\n\n` +
+                `👤 *姓名:* ${name}\n` +
+                `📱 *電話:* ${phone}\n` +
+                `📧 *電郵:* ${email}\n` +
+                `📅 *日期:* ${selectedBookingDate}\n` +
+                `⏰ *時間:* ${selectedBookingTime}`;
+
+            // 4. Create the Link
+            // 85296061079 is your number. encodeURIComponent ensures spaces/symbols work.
+            const waUrl = `https://wa.me/85255379080?text=${encodeURIComponent(waMessage)}`;
+
+            // 5. Open WhatsApp
+            // Opens in a new tab so they don't lose your website
+            window.open(waUrl, '_blank');
+
+            // Success Alert
+            alert('資料已儲存！我們將轉至 WhatsApp 以便您發送預約詳情。');
             
-            // Reset Form
+            // Reset Form & Refresh Slots
             document.getElementById('booking-form').reset();
             selectedBookingDate = '';
             selectedBookingTime = '';
-            generateTimeSlots(); // Refresh slots to show new booking
+            generateTimeSlots(); 
+
         } catch (e) {
             console.error("Error adding document: ", e);
-            alert("預約失敗，請檢查網絡連接或稍後再試。");
+            alert("預約失敗，請檢查網絡連接。");
         } finally {
+            // Re-enable button
             if(submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = "<span>確認預約</span>";
