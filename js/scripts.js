@@ -104,8 +104,8 @@ function router() {
     let path = window.location.hash;
 
     // If no hash or just '#', default to home and update hash
-    if (!path || path === '#') {
-        path = '#/home';
+    if (!path || path === '') {
+        path = '';
         // Update URL without adding to browser history for initial load/empty hash
         window.history.replaceState(null, null, path);
     }
