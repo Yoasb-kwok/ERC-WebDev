@@ -8,7 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <style>
         /* --- CSS VARIABLES (LIGHT THEME) --- */
         :root {
@@ -1032,182 +1034,211 @@
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // --- PAGE NAVIGATION LOGIC ---
-        function showPage(pageId) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.page-section');
-            sections.forEach(section => section.classList.remove('active'));
+    <!-- FIREBASE & APP LOGIC -->
+    <script type="module">
+    // 1. Import Firebase SDKs (App, Analytics, and Firestore)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } 
+        from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-            // Remove active class from nav buttons
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
+    // 2. Your Web App Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyB8UQ5702asQU7SGyfGhTgfZBmLv5FjUbc",
+        authDomain: "erc-booking.firebaseapp.com",
+        projectId: "erc-booking",
+        storageBucket: "erc-booking.firebasestorage.app",
+        messagingSenderId: "69669577622",
+        appId: "1:69669577622:web:ac786d4615a81b4507b3b7",
+        measurementId: "G-XRHJRLPBR6"
+    };
 
-            // Show selected section
-            const selectedSection = document.getElementById(pageId);
-            if (selectedSection) selectedSection.classList.add('active');
+    // 3. Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app); // Initialize Database
 
-            // Highlight nav button
-            // This finds the button whose onclick attribute contains the pageId
-            const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
-            const matchingBtn = navButtons.find(btn => {
-                const onclickAttr = btn.getAttribute('onclick');
-                return onclickAttr && onclickAttr.includes(pageId);
-            });
-            if (matchingBtn) matchingBtn.classList.add('active');
+    // --- PAGE NAVIGATION LOGIC ---
+    // We attach functions to 'window' so your HTML onclick="" attributes can find them
+    window.showPage = function(pageId) {
+        const sections = document.querySelectorAll('.page-section');
+        sections.forEach(section => section.classList.remove('active'));
 
-            // If navigating to the booking page, ensure slots are generated
-            if (pageId === 'booking') {
-                generateTimeSlots();
-            }
+        const buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
 
-            // Scroll to top
-            window.scrollTo(0, 0);
+        const selectedSection = document.getElementById(pageId);
+        if (selectedSection) selectedSection.classList.add('active');
+
+        // Highlight Nav
+        const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
+        const matchingBtn = navButtons.find(btn => {
+            const onclickAttr = btn.getAttribute('onclick');
+            return onclickAttr && onclickAttr.includes(pageId);
+        });
+        if (matchingBtn) matchingBtn.classList.add('active');
+
+        // Trigger Booking Logic if entering booking page
+        if (pageId === 'booking') {
+            generateTimeSlots();
         }
 
-        // --- SLIDER LOGIC ---
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('#home .slide'); // Only target home slides
-        const totalSlides = slides.length;
-        let autoSlideInterval;
+        window.scrollTo(0, 0);
+    }
 
-        function changeSlide(direction) {
-            if (slides.length === 0) return;
+    // --- BOOKING SYSTEM VARIABLES ---
+    let selectedBookingDate = '';
+    let selectedBookingTime = '';
 
-            slides[currentSlide].classList.remove('active');
-            
-            currentSlide = currentSlide + direction;
-            
-            if (currentSlide >= totalSlides) {
-                currentSlide = 0;
-            } else if (currentSlide < 0) {
-                currentSlide = totalSlides - 1;
-            }
-            
-            slides[currentSlide].classList.add('active');
-        }
+    // --- GENERATE TIME SLOTS (CHECKING FIREBASE) ---
+    window.generateTimeSlots = async function() {
+        const timeSlotsContainer = document.getElementById('time-slots-grid');
+        const dateInput = document.getElementById('booking-date');
+        
+        if (!timeSlotsContainer || !dateInput.value) return;
 
-        function startAutoSlide() {
-            autoSlideInterval = setInterval(() => changeSlide(1), 5000);
-        }
+        timeSlotsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">正在檢查預約狀況...</p>'; 
 
-        // Start auto-slide only if there are slides on the home page
-        if (totalSlides > 0) startAutoSlide();
+        const selectedDate = dateInput.value;
+        
+        // 1. Check Firebase for existing bookings on this date
+        const bookingsRef = collection(db, "bookings");
+        const q = query(bookingsRef, where("date", "==", selectedDate));
+        const querySnapshot = await getDocs(q);
 
-        const arrows = document.querySelectorAll('.slider-arrow');
-        arrows.forEach(arrow => {
-            arrow.addEventListener('click', () => {
-                clearInterval(autoSlideInterval);
-                startAutoSlide();
-            });
+        const bookedTimes = new Set();
+        querySnapshot.forEach((doc) => {
+            bookedTimes.add(doc.data().time);
         });
 
-        // --- BOOKING LOGIC (NEW) ---
-        let selectedBookingDate = '';
-        let selectedBookingTime = '';
+        // 2. Render Slots
+        timeSlotsContainer.innerHTML = ''; 
+        const startTimeMinutes = 10 * 60; // 10:00 AM
+        const endTimeMinutes = 17 * 60;   // 5:00 PM
+        const interval = 30;
 
-        function generateTimeSlots() {
-            const timeSlotsContainer = document.getElementById('time-slots-grid');
-            if (!timeSlotsContainer) return; // Ensure element exists
+        for (let minutes = startTimeMinutes; minutes <= endTimeMinutes; minutes += interval) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 
-            timeSlotsContainer.innerHTML = ''; // Clear previous slots
+            const slotButton = document.createElement('button');
+            slotButton.classList.add('time-slot-btn');
+            slotButton.textContent = timeString;
+            slotButton.setAttribute('data-time', timeString);
 
-            const startTimeMinutes = 10 * 60; // 10:00 AM in minutes
-            const endTimeMinutes = 17 * 60;   // 5:00 PM in minutes
-            const interval = 30;              // 30 minutes
-
-            for (let minutes = startTimeMinutes; minutes <= endTimeMinutes; minutes += interval) {
-                const hours = Math.floor(minutes / 60);
-                const mins = minutes % 60;
-                const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-
-                const slotButton = document.createElement('button');
-                slotButton.classList.add('time-slot-btn');
-                slotButton.textContent = timeString;
-                slotButton.setAttribute('data-time', timeString);
+            // If time is in bookedTimes, disable it
+            if (bookedTimes.has(timeString)) {
+                slotButton.disabled = true;
+                slotButton.style.backgroundColor = '#ccc';
+                slotButton.style.color = '#666';
+                slotButton.style.cursor = 'not-allowed';
+                slotButton.title = "已預約";
+            } else {
                 slotButton.onclick = function() { selectTimeSlot(this); };
-                timeSlotsContainer.appendChild(slotButton);
             }
+
+            timeSlotsContainer.appendChild(slotButton);
+        }
+    }
+
+    window.selectTimeSlot = function(button) {
+        const allSlots = document.querySelectorAll('.time-slot-btn');
+        allSlots.forEach(slot => slot.classList.remove('active'));
+        button.classList.add('active');
+        selectedBookingTime = button.getAttribute('data-time');
+        
+        const dateInput = document.getElementById('booking-date');
+        if (dateInput) selectedBookingDate = dateInput.value;
+    }
+
+    // --- SUBMIT BOOKING (WRITE TO FIREBASE) ---
+    window.submitBooking = async function() {
+        const name = document.getElementById('booking-name').value;
+        const phone = document.getElementById('booking-phone').value;
+        const email = document.getElementById('booking-email').value;
+
+        if (!selectedBookingDate || !selectedBookingTime || !name || !phone || !email) {
+            alert('請填寫所有預約資訊並選擇時間！');
+            return;
         }
 
-        function selectTimeSlot(button) {
-            // Remove active class from all other slots
-            const allSlots = document.querySelectorAll('.time-slot-btn');
-            allSlots.forEach(slot => slot.classList.remove('active'));
-
-            // Add active class to the clicked slot
-            button.classList.add('active');
-            selectedBookingTime = button.getAttribute('data-time');
-
-            // Update selected date if date input is used (should always be, but for safety)
-            const dateInput = document.getElementById('booking-date');
-            if (dateInput) {
-                selectedBookingDate = dateInput.value;
-            }
+        const submitBtn = document.querySelector('.booking-form button[type="submit"]');
+        if(submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = "處理中...";
         }
 
-        function submitBooking() {
-            const name = document.getElementById('booking-name').value;
-            const phone = document.getElementById('booking-phone').value;
-            const email = document.getElementById('booking-email').value;
+        try {
+            // Write to Firestore
+            await addDoc(collection(db, "bookings"), {
+                name: name,
+                phone: phone,
+                email: email,
+                date: selectedBookingDate,
+                time: selectedBookingTime,
+                created_at: serverTimestamp()
+            });
 
-            if (!selectedBookingDate || !selectedBookingTime || !name || !phone || !email) {
-                alert('請填寫所有預約資訊並選擇時間！');
-                return;
-            }
-
-            alert(`預約成功！\n姓名: ${name}\n電話: ${phone}\n電郵: ${email}\n日期: ${selectedBookingDate}\n時間: ${selectedBookingTime}\n\n我們將盡快與您確認。`);
-
-            // --- IMPORTANT ---
-            // In a real application, you would send this data to a backend server
-            // via AJAX (fetch API) to store the appointment.
-            // Example:
-            // fetch('/api/book-appointment', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ name, phone, email, date: selectedBookingDate, time: selectedBookingTime })
-            // })
-            // .then(response => response.json())
-            // .then(data => console.log('Booking response:', data))
-            // .catch(error => console.error('Booking error:', error));
-
-            // Optionally reset form and selections after successful submission
+            alert(`預約成功！\n我們將發送確認電郵至: ${email}`);
+            
+            // Reset Form
             document.getElementById('booking-form').reset();
             selectedBookingDate = '';
             selectedBookingTime = '';
-            const allSlots = document.querySelectorAll('.time-slot-btn');
-            allSlots.forEach(slot => slot.classList.remove('active'));
-        }
-
-        // Initialize date picker and time slots on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const dateInput = document.getElementById('booking-date');
-            if (dateInput) {
-                // Set today's date as default and minimum selectable date
-                const today = new Date();
-                const yyyy = today.getFullYear();
-                const mm = (today.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
-                const dd = today.getDate().toString().padStart(2, '0');
-                const todayString = `${yyyy}-${mm}-${dd}`;
-
-                dateInput.value = todayString;
-                selectedBookingDate = todayString; // Set initial selected date
-                dateInput.min = todayString; // Prevent selecting past dates
-
-                dateInput.addEventListener('change', (event) => {
-                    selectedBookingDate = event.target.value;
-                    // Clear selected time when date changes
-                    selectedBookingTime = '';
-                    const allSlots = document.querySelectorAll('.time-slot-btn');
-                    allSlots.forEach(slot => slot.classList.remove('active'));
-                    // Regenerate slots in case specific dates have different logic (though currently fixed 10-5)
-                    generateTimeSlots(); 
-                });
+            generateTimeSlots(); // Refresh slots to show new booking
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            alert("預約失敗，請檢查網絡連接或稍後再試。");
+        } finally {
+            if(submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = "<span>確認預約</span>";
             }
+        }
+    }
 
-            // Generate slots initially if the booking section is visible or about to be
-            // This is handled by showPage('booking')
-        });
+    // --- SLIDER LOGIC ---
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('#home .slide');
+    const totalSlides = slides.length;
+    let autoSlideInterval;
+
+    window.changeSlide = function(direction) {
+        if (slides.length === 0) return;
+        slides[currentSlide].classList.remove('active');
+        currentSlide = currentSlide + direction;
+        if (currentSlide >= totalSlides) currentSlide = 0;
+        else if (currentSlide < 0) currentSlide = totalSlides - 1;
+        slides[currentSlide].classList.add('active');
+    }
+
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(() => changeSlide(1), 5000);
+    }
+    if (totalSlides > 0) startAutoSlide();
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateInput = document.getElementById('booking-date');
+        if (dateInput) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+            const dd = today.getDate().toString().padStart(2, '0');
+            const todayString = `${yyyy}-${mm}-${dd}`;
+
+            dateInput.value = todayString;
+            selectedBookingDate = todayString;
+            dateInput.min = todayString;
+
+            dateInput.addEventListener('change', (event) => {
+                selectedBookingDate = event.target.value;
+                selectedBookingTime = '';
+                generateTimeSlots(); 
+            });
+        }
+    });
     </script>
 </body>
 </html>
