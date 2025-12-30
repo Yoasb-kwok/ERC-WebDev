@@ -8,9 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
     <style>
         /* --- CSS VARIABLES (LIGHT THEME) --- */
         :root {
@@ -77,6 +75,7 @@
             gap: 20px;
         }
 
+        /* Apply nav-btn styles to <a> tags */
         .nav-btn {
             background: none;
             border: none;
@@ -87,6 +86,10 @@
             font-weight: 600;
             transition: 0.3s;
             padding: 5px 10px;
+            text-decoration: none; /* Add this for <a> tags */
+            display: flex; /* Allow <a> to be styled like a button */
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-btn:hover, .nav-btn.active {
@@ -254,13 +257,13 @@
         .prev { left: 30px; }
         .next { right: 30px; }
 
-        /* --- BUTTONS --- */
+        /* --- BUTTONS (Applied to both <button> and <a> with these classes) --- */
         .cta-button {
             display: inline-block;
             padding: 15px 40px;
             background: var(--racing-red);
             color: white;
-            text-decoration: none;
+            text-decoration: none; /* Added for <a> tags */
             font-weight: bold;
             font-size: 1.2rem;
             border: 2px solid var(--racing-red);
@@ -686,7 +689,7 @@
     <!-- NAVIGATION -->
     <nav>
         <!-- Updated Logo Link with Image -->
-        <a href="#" class="logo-link" onclick="showPage('home')">
+        <a href="#/home" class="logo-link">
             <img src="images/logo.png" alt="ERC Logo" class="logo-img">
             <!-- If you still want text next to the image, uncomment the line below -->
             <!-- <span class="logo-text">ERC Project</span> -->
@@ -695,14 +698,13 @@
             <i class="fas fa-bars"></i>
         </button>
         <div class="nav-links" id="mobile-nav-links">
-            <button class="nav-btn active" onclick="showPage('home')">首頁</button>
-            <button class="nav-btn" onclick="showPage('exhibitions')">展覽活動</button>
-            <button class="nav-btn" onclick="showPage('courses')">課程</button>
-            <button class="nav-btn" onclick="showPage('about')">關於 ERC</button>
-            <button class="nav-btn" onclick="showPage('booking')">預約體驗</button> 
-            <button class="nav-btn" onclick="showPage('contact')">聯絡我們</button>
-             <!-- NEW NAV BUTTON -->
-            <button class="nav-btn download-nav" onclick="showPage('download')"><span><i class="fas fa-download"></i> 軟體下載</span></button>
+            <a href="#/home" class="nav-btn" data-page-id="home">首頁</a>
+            <a href="#/exhibitions" class="nav-btn" data-page-id="exhibitions">展覽活動</a>
+            <a href="#/courses" class="nav-btn" data-page-id="courses">課程</a>
+            <a href="#/about" class="nav-btn" data-page-id="about">關於 ERC</a>
+            <a href="#/booking" class="nav-btn" data-page-id="booking">預約體驗</a> 
+            <a href="#/contact" class="nav-btn" data-page-id="contact">聯絡我們</a>
+            <a href="#/download" class="nav-btn download-nav" data-page-id="download"><span><i class="fas fa-download"></i> 軟體下載</span></a>
         </div>
     </nav>
 
@@ -731,8 +733,8 @@
                 <h1>智能實景駕駛 · <span style="color:var(--racing-red)">安全學習新體驗</span></h1>
                 <p>結合虛擬實景、人工智能與電動車技術，創新的 STEM 教育方案</p>
                 <div style="margin-top: 30px;">
-                    <button class="cta-button" onclick="showPage('courses')"><span>查看課程</span></button>
-                    <button class="cta-button btn-secondary" onclick="showPage('contact')"><span>聯絡我們</span></button>
+                    <a href="#/courses" class="cta-button"><span>查看課程</span></a>
+                    <a href="#/contact" class="cta-button btn-secondary"><span>聯絡我們</span></a>
                 </div>
             </div>
         </div>
@@ -1058,9 +1060,6 @@
     const analytics = getAnalytics(app);
     const db = getFirestore(app); // Initialize Database
 
-    // --- PAGE NAVIGATION LOGIC ---
-    // We attach functions to 'window' so your HTML onclick="" attributes can find them
-
     // --- MOBILE MENU TOGGLE LOGIC ---
     window.toggleMobileMenu = function() {
         const navLinks = document.getElementById('mobile-nav-links');
@@ -1078,40 +1077,89 @@
         }
     };
 
-    window.showPage = function(pageId) {
-        const sections = document.querySelectorAll('.page-section');
-        sections.forEach(section => section.classList.remove('active'));
+    // --- PAGE NAVIGATION LOGIC ---
+    // Define routes for different pages
+    const routes = {
+        '#/home': 'home',
+        '#/about': 'about',
+        '#/exhibitions': 'exhibitions',
+        '#/courses': 'courses',
+        '#/booking': 'booking',
+        '#/contact': 'contact',
+        '#/download': 'download'
+    };
 
-        const buttons = document.querySelectorAll('.nav-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
-
-        const selectedSection = document.getElementById(pageId);
-        if (selectedSection) selectedSection.classList.add('active');
-
-        // Highlight Nav
-        const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
-        const matchingBtn = navButtons.find(btn => {
-            const onclickAttr = btn.getAttribute('onclick');
-            return onclickAttr && onclickAttr.includes(pageId);
+    /**
+     * Handles displaying the correct page section and updating navigation highlights.
+     * This function is called by the router.
+     */
+    function showPage(pageId) {
+        // 1. Hide all sections
+        document.querySelectorAll('.page-section').forEach(section => {
+            section.classList.remove('active');
         });
-        if (matchingBtn) matchingBtn.classList.add('active');
 
-        // Trigger Booking Logic if entering booking page
-        if (pageId === 'booking') {
-            generateTimeSlots();
+        // 2. Show the active section
+        const selectedSection = document.getElementById(pageId);
+        if (selectedSection) {
+            selectedSection.classList.add('active');
         }
 
+        // 3. Update active state for navigation links
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        const matchingBtn = document.querySelector(`.nav-links .nav-btn[data-page-id="${pageId}"]`);
+        if (matchingBtn) {
+            matchingBtn.classList.add('active');
+        }
+
+        // 4. Trigger Booking Logic if navigating to the booking page
+        if (pageId === 'booking') {
+            // Assuming window.generateTimeSlots is defined elsewhere to handle time slot generation
+            if (window.generateTimeSlots) {
+                window.generateTimeSlots();
+            }
+        }
+
+        // 5. Close mobile menu if it's open (copied from original showPage logic)
         const navLinks = document.getElementById('mobile-nav-links');
         if (navLinks && navLinks.classList.contains('open')) {
             navLinks.classList.remove('open');
-            // Reset menu icon
             const menuToggleIcon = document.querySelector('.menu-toggle i');
-            menuToggleIcon.classList.remove('fa-times');
-            menuToggleIcon.classList.add('fa-bars');
+            if (menuToggleIcon) {
+                menuToggleIcon.classList.remove('fa-times');
+                menuToggleIcon.classList.add('fa-bars');
+            }
         }
-
+        
+        // 6. Scroll to top when changing pages
         window.scrollTo(0, 0);
     }
+
+    /**
+     * Central router function to handle URL hash changes.
+     */
+    function router() {
+        let path = window.location.hash;
+
+        // If no hash or just '#', default to home and update hash
+        if (!path || path === '#') {
+            path = '#/home';
+            // Update URL without adding to browser history for initial load/empty hash
+            window.history.replaceState(null, null, path); 
+        }
+
+        const pageId = routes[path];
+
+        if (pageId) {
+            showPage(pageId); // Call the display function
+        } else {
+            // If an invalid hash is entered, redirect to home
+            window.location.hash = '#/home';
+        }
+    }
+
 
     // --- BOOKING SYSTEM VARIABLES ---
     let selectedBookingDate = '';
@@ -1222,7 +1270,7 @@
                 `⏰ *時間:* ${selectedBookingTime}`;
 
             // 4. Create the Link
-            // 85296061079 is your number. encodeURIComponent ensures spaces/symbols work.
+            // Using your testing number 85255379080 with country code 852
             const waUrl = `https://wa.me/85255379080?text=${encodeURIComponent(waMessage)}`;
 
             // 5. Open WhatsApp
@@ -1290,7 +1338,13 @@
                 generateTimeSlots(); 
             });
         }
+        
+        // Initial route setup after DOM is loaded
+        router();
     });
+
+    // Add event listener for hash changes
+    window.addEventListener('hashchange', router);
     </script>
 </body>
 </html>
