@@ -1,1 +1,672 @@
+/* --- CSS VARIABLES (LIGHT THEME) --- */
+:root {
+    --racing-red: #ff1801;
+    --electric-blue: #007cc7;
+    --bg-white: #ffffff;
+    --bg-light: #f4f6f8;
+    --text-main: #1a1a1a;
+    --text-muted: #555555;
+    --font-display: 'Orbitron', sans-serif;
+    --font-body: 'Noto Sans TC', sans-serif;
+    --whatsapp-green: #25d366;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-white);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* --- NAVIGATION --- */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--racing-red);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* 舊的 .logo 樣式已移除，現在 Logo 由圖片控制 */
+.logo-link {
+    display: flex; /* 確保圖片能正確顯示 */
+    align-items: center;
+    text-decoration: none; /* 移除連結下劃線 */
+}
+
+.logo-img {
+    height: 45px; /* 設定您的 Logo 圖片高度 */
+    width: auto; /* 保持圖片比例 */
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05); /* 鼠標懸停時稍微放大 */
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+/* Apply nav-btn styles to <a> tags */
+.nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+    padding: 5px 10px;
+    text-decoration: none; /* Add this for <a> tags */
+    display: flex; /* Allow <a> to be styled like a button */
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    color: var(--racing-red);
+}
+
+.download-nav {
+    background-color: var(--racing-red);
+    color: white !important;
+    padding: 8px 20px;
+    border-radius: 4px;
+    transform: skewX(-15deg);
+}
+
+.download-nav span { display: inline-block; transform: skewX(15deg); }
+.download-nav:hover {
+    background-color: var(--text-main);
+    color: white;
+}
+
+/* Mobile menu toggle button (hidden by default) */
+.menu-toggle {
+    display: none; /* Hidden by default on desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* --- WHATSAPP FLOATING BUTTON --- */
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 30px;
+    right: 30px;
+    background-color: var(--whatsapp-green);
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 35px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 2px 2px 15px rgba(0,0,0,0.3);
+    background-color: #1ebd57;
+}
+
+/* --- PAGE CONTENT HANDLING --- */
+.page-section {
+    display: none;
+    padding-top: 80px;
+    min-height: 100vh;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.page-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- HERO SLIDER STYLES --- */
+.hero {
+    position: relative;
+    padding: 0;
+    height: 85vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #ffffff;
+}
+
+.slider-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
+
+.slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.slide.active { opacity: 1; }
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    font-weight: 900;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    line-height: 1.2;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    color: white;
+    border: 1px solid white;
+    font-size: 24px;
+    padding: 15px 20px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+}
+
+.slider-arrow:hover {
+    background: white;
+    color: black;
+}
+
+.prev { left: 30px; }
+.next { right: 30px; }
+
+/* --- BUTTONS (Applied to both <button> and <a> with these classes) --- */
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background: var(--racing-red);
+    color: white;
+    text-decoration: none; /* Added for <a> tags */
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: 2px solid var(--racing-red);
+    transition: 0.3s;
+    transform: skewX(-15deg);
+    cursor: pointer;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+}
+
+.cta-button span { display: inline-block; transform: skewX(15deg); }
+.cta-button:hover {
+    background: white;
+    color: var(--racing-red);
+}
+
+.btn-secondary {
+    background: transparent;
+    border-color: white;
+    margin-left: 10px;
+}
+.btn-secondary:hover {
+    background: white;
+    color: var(--text-main);
+    border-color: white;
+}
+
+/* --- CONTAINER & CARDS --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+/* 課程專用：雙欄 (1fr 1fr) */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+.split-container {
+    display: flex;           /* 開啟並排 */
+    align-items: center;     /* 垂直置中 */
+    gap: 40px;               /* 圖文間距 */
+    margin-bottom: 50px;     /* 每一大行之間的距離 */
+}
+
+.split-container:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.split-image,
+.split-text {
+    flex: 1;                 /* 兩個區塊平分空間 (1:1) */
+    min-width: 0;
+}
+.split-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+.split-container:nth-child(even) {
+flex-direction: row-reverse;
+}
+
+
+/* 首頁核心價值專用：三欄 (3, 1fr) */
+.values-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.card {
+    background: var(--bg-light);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    border-left: 4px solid var(--electric-blue);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+    color: var(--electric-blue);
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+}
+
+.card-date {
+    color: var(--racing-red);
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+
+
+.event div{
+    width: 300px;
+    text-align: center;
+}
+
+.event img{
+    width: 50%;
+    border-radius: 10px;
+}
+
+.einfo {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tag {
+    display: inline-block;
+    background: rgba(0, 124, 199, 0.1);
+    color: var(--electric-blue);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-right: 5px;
+}
+
+/* --- DOWNLOAD SECTION --- */
+.download-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--bg-light);
+    padding: 50px;
+    border-top: 5px solid var(--racing-red);
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.requirements {
+    text-align: left;
+    background: white;
+    padding: 20px;
+    margin: 30px 0;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+.requirements h4 { margin-bottom: 10px; }
+.requirements ul { list-style: none; padding-left: 0; }
+.requirements li { color: var(--text-muted); margin-bottom: 5px; }
+.requirements li i { color: var(--electric-blue); width: 20px; }
+
+/* --- BOOKING PAGE STYLES --- */
+.booking-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--bg-light);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.booking-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: var(--text-main);
+    font-size: 1.1rem;
+}
+
+.booking-container input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    background-color: white;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.time-slot-btn {
+    background-color: white;
+    border: 1px solid var(--electric-blue);
+    color: var(--electric-blue);
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.time-slot-btn:hover {
+    background-color: var(--electric-blue);
+    color: white;
+}
+
+.time-slot-btn.active {
+    background-color: var(--racing-red);
+    border-color: var(--racing-red);
+    color: white;
+    box-shadow: 0 0 10px rgba(255, 24, 1, 0.4);
+}
+
+.booking-form {
+    text-align: left;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.booking-form .form-group {
+    margin-bottom: 15px;
+}
+
+.booking-form label {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.booking-form input[type="text"],
+.booking-form input[type="tel"],
+.booking-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.booking-form button[type="submit"] {
+    width: auto;
+    margin-top: 20px;
+    transform: skewX(0deg); /* Remove skew for form button */
+}
+.booking-form button[type="submit"] span {
+    transform: skewX(0deg);
+}
+
+
+/* --- FOOTER --- */
+footer {
+    background: #f8f8f8;
+    text-align: center;
+    padding: 40px;
+    margin-top: 50px;
+    border-top: 1px solid #e0e0e0;
+    color: var(--text-muted);
+}
+footer p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+.social-links a {
+    color: var(--text-muted);
+    margin: 0 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+.social-links a:hover {
+    color: var(--electric-blue);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    /* Navigation adjustments for mobile */
+    nav {
+        padding: 15px 20px; /* Adjust nav padding */
+        flex-wrap: wrap; /* Allow elements to wrap */
+    }
+    .nav-links {
+        display: none; /* Hide nav links by default on mobile */
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 70px; /* Position below the main nav bar */
+        left: 0;
+        background: rgba(255, 255, 255, 0.98);
+        border-top: 1px solid #eee;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        padding: 10px 0;
+        z-index: 999;
+        max-height: calc(100vh - 70px);
+        overflow-y: auto; /* Enable scrolling for long menus */
+    }
+    .nav-links.open {
+        display: flex; /* Show menu when 'open' class is applied */
+    }
+    .nav-links .nav-btn {
+        width: 100%;
+        text-align: left;
+        padding: 12px 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .nav-links .nav-btn:last-child {
+        border-bottom: none;
+    }
+    .menu-toggle {
+        display: block; /* Show hamburger icon on mobile */
+    }
+
+    /* General page adjustments */
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1rem; margin: 0 auto 20px auto; }
+    .hero { height: 60vh; }
+    .cta-button, .btn-secondary {
+        display: block; /* Make buttons stack vertically */
+        width: calc(100% - 40px); /* Full width minus container padding */
+        margin: 10px auto; /* Center buttons and add vertical spacing */
+        transform: skewX(0deg); /* Remove skew for better readability */
+        text-align: center;
+        padding: 12px 20px;
+    }
+    .cta-button span { transform: skewX(0deg); } /* Remove skew from span content */
+    .btn-secondary { margin-left: auto; margin-right: auto; } /* Ensure secondary button centers */
+
+    /* Grid containers now always stack on mobile */
+    .grid-container, .values-container {
+        grid-template-columns: 1fr;
+    }
+    .container {
+        padding: 20px; /* Reduce general container padding */
+    }
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    .section-header p {
+        font-size: 1rem;
+    }
+    .download-nav { /* Ensure download nav button also removes skew */
+        transform: skewX(0deg);
+    }
+    .download-nav span {
+        transform: skewX(0deg);
+    }
+}
+
+/* Further adjustments for very small phone screens */
+@media (max-width: 480px) {
+    nav { padding: 10px 15px; }
+    .logo-img { height: 35px; } /* Smaller logo on very small screens */
+    .hero h1 { font-size: 1.8rem; }
+    .hero p { font-size: 0.9rem; }
+    .cta-button, .btn-secondary {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+    .slider-arrow {
+        padding: 8px 12px;
+        font-size: 18px;
+        left: 10px;
+        right: 10px;
+    }
+    .hero-content {
+        padding: 10px;
+    }
+    footer {
+        padding: 20px;
+        font-size: 0.8rem;
+    }
+    .social-links a {
+        font-size: 1.2rem;
+        margin: 0 5px;
+    }
+}
+
+/* Hide slider arrows on mobile screens */
+@media (max-width: 768px) {
+    .slider-arrow { display: none; } /* NEW: Hide slider arrows on small screens */
+}
