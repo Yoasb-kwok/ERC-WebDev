@@ -691,7 +691,7 @@
             <!-- If you still want text next to the image, uncomment the line below -->
             <!-- <span class="logo-text">ERC Project</span> -->
         </a>
-        <button class="menu-toggle" aria-label="Toggle navigation">
+        <button class="menu-toggle" aria-label="Toggle navigation" onclick="toggleMobileMenu()">
             <i class="fas fa-bars"></i>
         </button>
         <div class="nav-links" id="mobile-nav-links">
@@ -1060,6 +1060,24 @@
 
     // --- PAGE NAVIGATION LOGIC ---
     // We attach functions to 'window' so your HTML onclick="" attributes can find them
+
+    // --- MOBILE MENU TOGGLE LOGIC ---
+    window.toggleMobileMenu = function() {
+        const navLinks = document.getElementById('mobile-nav-links');
+        if (navLinks) {
+            navLinks.classList.toggle('open');
+            // Optional: Change the icon from bars to times (X) when open
+            const menuToggleIcon = document.querySelector('.menu-toggle i');
+            if (navLinks.classList.contains('open')) {
+                menuToggleIcon.classList.remove('fa-bars');
+                menuToggleIcon.classList.add('fa-times');
+            } else {
+                menuToggleIcon.classList.remove('fa-times');
+                menuToggleIcon.classList.add('fa-bars');
+            }
+        }
+    };
+
     window.showPage = function(pageId) {
         const sections = document.querySelectorAll('.page-section');
         sections.forEach(section => section.classList.remove('active'));
@@ -1082,6 +1100,15 @@
         if (pageId === 'booking') {
             generateTimeSlots();
         }
+
+        const navLinks = document.getElementById('mobile-nav-links');
+        if (navLinks && navLinks.classList.contains('open')) {
+            navLinks.classList.remove('open');
+            // Reset menu icon
+            const menuToggleIcon = document.querySelector('.menu-toggle i');
+            menuToggleIcon.classList.remove('fa-times');
+            menuToggleIcon.classList.add('fa-bars');
+     
 
         window.scrollTo(0, 0);
     }
