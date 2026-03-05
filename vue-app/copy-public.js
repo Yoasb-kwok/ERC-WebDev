@@ -19,3 +19,8 @@ function copyDir(src, dest) {
 copyDir(path.join(root, 'images'), path.join(dir, 'public', 'images'))
 copyDir(path.join(root, 'css'), path.join(dir, 'public', 'css'))
 copyDir(path.join(root, 'videos'), path.join(dir, 'public', 'videos'))
+// 若有 favicon.ico 在專案根目錄，複製到 public 以解決 /favicon.ico 404
+const faviconSrc = path.join(root, 'favicon.ico')
+if (fs.existsSync(faviconSrc)) {
+  fs.copyFileSync(faviconSrc, path.join(dir, 'public', 'favicon.ico'))
+}
