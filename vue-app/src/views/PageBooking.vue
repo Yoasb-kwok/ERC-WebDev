@@ -171,11 +171,20 @@ function buildSlots() {
 }
 
 async function fetchBookedTimes(date) {
-  const q = query(collection(db, 'bookings'), where('date', '==', date))
-  const snap = await getDocs(q)
-  const set = new Set()
-  snap.forEach((doc) => set.add(doc.data().time))
-  return set
+  if (!db) {
+    console.warn('Firebase is not configured. All time slots will be available.')
+    return new Set()
+  }
+  try {
+    const q = query(collection(db, 'bookings'), where('date', '==', date))
+    const snap = await getDocs(q)
+    const set = new Set()
+    snap.forEach((doc) => set.add(doc.data().time))
+    return set
+  } catch (error) {
+    console.error('Failed to fetch booked times:', error)
+    return new Set()
+  }
 }
 
 async function loadSlots() {
@@ -190,10 +199,16 @@ async function loadSlots() {
   }
   fridayError.value = false
   loadingSlots.value = true
-  const booked = await fetchBookedTimes(date)
-  timeSlots.value = buildSlots().map((s) => ({ ...s, booked: booked.has(s.time) }))
-  loadingSlots.value = false
-  selectedTime.value = ''
+  try {
+    const booked = await fetchBookedTimes(date)
+    timeSlots.value = buildSlots().map((s) => ({ ...s, booked: booked.has(s.time) }))
+  } catch (error) {
+    console.error('Failed to load slots:', error)
+    timeSlots.value = buildSlots()
+  } finally {
+    loadingSlots.value = false
+    selectedTime.value = ''
+  }
 }
 
 function onDateChange() {
@@ -219,19 +234,25 @@ async function submitBooking() {
 
   submitting.value = true
   try {
-    await addDoc(collection(db, 'bookings'), {
-      name: form.value.name,
-      phone: form.value.phone,
-      email: form.value.email,
-      date: selectedDate.value,
-      time: selectedTime.value,
-      plan: selectedPlan.value,
-      plan_label: planLabel,
-      created_at: serverTimestamp()
-    })
+    if (db) {
+      await addDoc(collection(db, 'bookings'), {
+        name: form.value.name,
+        phone: form.value.phone,
+        email: form.value.email,
+        date: selectedDate.value,
+        time: selectedTime.value,
+        plan: selectedPlan.value,
+        plan_label: planLabel,
+        created_at: serverTimestamp()
+      })
+    }
     const msg = `你好 ERC，我想預約體驗。\n\n📋 *方案:* ${planDetail}\n👤 *姓名:* ${form.value.name}\n📱 *電話:* ${form.value.phone}\n📧 *電郵:* ${form.value.email}\n📅 *日期:* ${selectedDate.value}\n⏰ *時間:* ${selectedTime.value}`
     window.open(`https://wa.me/85255379080?text=${encodeURIComponent(msg)}`, '_blank')
-    alert('資料已儲存！我們將轉至 WhatsApp 以便您發送預約詳情。')
+    if (db) {
+      alert('資料已儲存！我們將轉至 WhatsApp 以便您發送預約詳情。')
+    } else {
+      alert('我們將轉至 WhatsApp 以便您發送預約詳情。')
+    }
     form.value = { name: '', phone: '', email: '' }
     selectedTime.value = ''
     selectedPlan.value = ''

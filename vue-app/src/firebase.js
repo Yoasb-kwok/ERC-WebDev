@@ -12,6 +12,21 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 }
 
-const app = initializeApp(firebaseConfig)
-getAnalytics(app)
-export const db = getFirestore(app)
+let app = null
+let db = null
+
+try {
+  const hasConfig = firebaseConfig.apiKey && firebaseConfig.projectId
+  if (hasConfig) {
+    app = initializeApp(firebaseConfig)
+    getAnalytics(app)
+    db = getFirestore(app)
+  } else {
+    console.warn('Firebase configuration is missing. Firebase features will be disabled.')
+  }
+} catch (error) {
+  console.error('Firebase initialization failed:', error)
+  console.warn('Firebase features will be disabled.')
+}
+
+export { db }
