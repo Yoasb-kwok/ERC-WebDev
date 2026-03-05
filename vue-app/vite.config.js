@@ -33,6 +33,7 @@ function getMime(ext) {
 }
 
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [vue(), serveParentAssets()],
   resolve: {
     alias: {

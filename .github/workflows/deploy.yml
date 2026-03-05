@@ -36,6 +36,11 @@ jobs:
 
       - name: Build
         working-directory: ./vue-app
+        env:
+          # For GitHub Pages URL: use '/ERC-WebDev/'
+          # For custom domain (e-racingcar.com): use '/'
+          # Change this based on which URL you're using
+          VITE_BASE_PATH: /ERC-WebDev/
         run: npm run build
 
       - name: Setup Pages
