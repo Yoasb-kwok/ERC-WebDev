@@ -1,8 +1,8 @@
 <template>
   <section id="exhibitions">
     <HeroSection :slides="['/images/exhibit.png']" hero-height="40vh">
-      <h1>展覽及體驗活動</h1>
-      <p>ERC 已於多個大型活動中展出智能實景駕駛體驗</p>
+      <h1>{{ copy.title }}</h1>
+      <p>{{ copy.subtitle }}</p>
     </HeroSection>
 
     <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 40px 20px;">
@@ -16,12 +16,12 @@
           <img :src="exhibition.coverImage" :alt="exhibition.title">
         </div>
         <div class="split-text">
-          <h3>{{ exhibition.date }}<br>{{ exhibition.title }}</h3>
-          <p>{{ exhibition.intro }}</p>
+          <h3>{{ getText(exhibition.date) }}<br>{{ getText(exhibition.title) }}</h3>
+          <p>{{ getText(exhibition.intro) }}</p>
           <div class="tags">
-            <span v-for="tag in exhibition.tags" :key="tag" class="tag">{{ tag }}</span>
+            <span v-for="tag in exhibition.tags" :key="JSON.stringify(tag)" class="tag">{{ getText(tag) }}</span>
           </div>
-          <span class="exhibition-card-link">查看活動詳情與相片 <i class="fas fa-chevron-right"></i></span>
+          <span class="exhibition-card-link">{{ copy.detailLink }} <i class="fas fa-chevron-right"></i></span>
         </div>
       </router-link>
     </div>
@@ -29,8 +29,24 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import HeroSection from '@/components/HeroSection.vue'
+import { getText, language } from '@/i18n'
 import { exhibitions } from '@/data/exhibitions'
+
+const copy = computed(() => (
+  language.value === 'en'
+    ? {
+      title: 'Exhibitions & Experience Events',
+      subtitle: 'ERC has showcased immersive smart-driving experiences at major events.',
+      detailLink: 'View event details and photos'
+    }
+    : {
+      title: '展覽及體驗活動',
+      subtitle: 'ERC 已於多個大型活動中展出智能實景駕駛體驗',
+      detailLink: '查看活動詳情與相片'
+    }
+))
 </script>
 
 <style scoped>

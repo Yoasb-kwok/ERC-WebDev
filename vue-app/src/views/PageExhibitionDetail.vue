@@ -2,33 +2,33 @@
   <section id="exhibition-detail" class="exhibition-detail-page">
     <div class="container">
       <router-link to="/exhibitions" class="exhibition-detail-back">
-        <i class="fas fa-arrow-left"></i> 返回展覽活動
+        <i class="fas fa-arrow-left"></i> {{ copy.back }}
       </router-link>
 
       <template v-if="exhibition">
         <header class="exhibition-detail-header">
           <div class="exhibition-detail-meta">
-            <p class="exhibition-detail-date">{{ exhibition.date }}</p>
-            <h1>{{ exhibition.title }}</h1>
+            <p class="exhibition-detail-date">{{ getText(exhibition.date) }}</p>
+            <h1>{{ getText(exhibition.title) }}</h1>
             <div class="tags">
-              <span v-for="tag in exhibition.tags" :key="tag" class="tag">{{ tag }}</span>
+              <span v-for="tag in exhibition.tags" :key="JSON.stringify(tag)" class="tag">{{ getText(tag) }}</span>
             </div>
           </div>
         </header>
 
         <section class="exhibition-detail-intro">
-          <h2><i class="fas fa-info-circle"></i> 活動簡介</h2>
-          <p>{{ exhibition.introDetail || exhibition.intro }}</p>
+          <h2><i class="fas fa-info-circle"></i> {{ copy.intro }}</h2>
+          <p>{{ getText(exhibition.introDetail || exhibition.intro) }}</p>
         </section>
 
         <section class="exhibition-detail-gallery">
-          <h2><i class="fas fa-images"></i> 活動相片</h2>
+          <h2><i class="fas fa-images"></i> {{ copy.photos }}</h2>
           <div class="exhibition-gallery-slider">
             <button
               v-if="exhibition.gallery.length > 1"
               type="button"
               class="exhibition-gallery-btn exhibition-gallery-prev"
-              aria-label="上一張"
+              :aria-label="copy.prev"
               @click="galleryPrev"
             >
               <i class="fas fa-chevron-left"></i>
@@ -50,7 +50,7 @@
               v-if="exhibition.gallery.length > 1"
               type="button"
               class="exhibition-gallery-btn exhibition-gallery-next"
-              aria-label="下一張"
+              :aria-label="copy.next"
               @click="galleryNext"
             >
               <i class="fas fa-chevron-right"></i>
@@ -61,8 +61,8 @@
       </template>
 
       <div v-else class="exhibition-detail-not-found">
-        <p>找不到該活動</p>
-        <router-link to="/exhibitions">返回展覽活動列表</router-link>
+        <p>{{ copy.notFound }}</p>
+        <router-link to="/exhibitions">{{ copy.backList }}</router-link>
       </div>
     </div>
   </section>
@@ -72,6 +72,7 @@
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getExhibitionById } from '@/data/exhibitions'
+import { language, getText } from '@/i18n'
 
 const route = useRoute()
 const exhibition = computed(() => getExhibitionById(route.params.id))
@@ -80,6 +81,27 @@ const slideDirection = ref('left')
 let autoPlayTimer = null
 let resumeTimer = null
 const AUTO_PLAY_INTERVAL = 4000
+const copy = computed(() => (
+  language.value === 'en'
+    ? {
+      back: 'Back to exhibitions',
+      intro: 'Event Overview',
+      photos: 'Photos',
+      prev: 'Previous photo',
+      next: 'Next photo',
+      notFound: 'Event not found',
+      backList: 'Back to exhibitions list'
+    }
+    : {
+      back: '返回展覽活動',
+      intro: '活動簡介',
+      photos: '活動相片',
+      prev: '上一張',
+      next: '下一張',
+      notFound: '找不到該活動',
+      backList: '返回展覽活動列表'
+    }
+))
 
 watch(exhibition, () => {
   galleryIndex.value = 0

@@ -182,6 +182,30 @@ nav {
     text-align: center;
 }
 
+.language-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    padding: 4px 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 999px;
+    background: #fff;
+}
+.language-switcher i {
+    color: var(--electric-blue);
+    font-size: 0.95rem;
+}
+.language-switcher select {
+    border: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--text-main);
+    outline: none;
+    cursor: pointer;
+}
+
 /* --- WHATSAPP FLOATING BUTTON --- */
 .whatsapp-float {
     position: fixed;
@@ -1365,6 +1389,13 @@ footer p {
     }
     .menu-toggle {
         display: block; /* Show hamburger icon on mobile */
+    }
+    .language-switcher {
+        width: calc(100% - 24px);
+        justify-content: center;
+        margin: 10px auto 4px;
+        border-radius: 8px;
+        padding: 10px;
     }
 
     /* General page adjustments */
