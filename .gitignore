@@ -7,10 +7,22 @@ vue-app/public/images/
 vue-app/public/css/
 vue-app/public/videos/
 
-# Environment
+# Environment（絕對不要提交：內含金鑰、密碼）
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
+*.env
+
+# 金鑰、憑證、密碼檔
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*
+*secret*
+secrets/
 
 # Editor / OS
 .DS_Store
