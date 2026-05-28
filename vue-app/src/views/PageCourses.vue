@@ -6,20 +6,52 @@
     </HeroSection>
 
     <div class="container">
-      <div class="section-header">
-        <h2>{{ copy.modulesTitle }}</h2>
-        <p>{{ copy.modulesSubtitle }}</p>
-      </div>
-
-      <div class="grid-container">
-        <div v-for="course in copy.courseCards" :key="course.title" class="card">
-          <div class="card-date">{{ course.category }}</div>
-          <h3>{{ course.title }} <br>({{ course.subtitle }})</h3>
-          <p>{{ course.description }}</p>
-          <span class="tag">{{ course.tag1 }}</span>
-          <span class="tag">{{ course.tag2 }}</span>
+      <section
+        v-for="section in courseSections"
+        :key="section.id"
+        class="course-section"
+      >
+        <div class="section-header">
+          <h2>{{ getText(section.title) }}</h2>
         </div>
-      </div>
+
+        <div class="course-grid">
+          <article
+            v-for="course in section.courses"
+            :key="course.id"
+            class="course-item"
+          >
+            <PosterLightboxTrigger
+              class="course-poster"
+              :src="course.poster"
+              :alt="getText(course.title)"
+              :zoom-label="copy.zoomPoster"
+              :close-label="copy.closeZoom"
+              @error="(e) => onPosterError(e, course.id)"
+            />
+            <div class="course-info">
+              <span class="course-category">{{ getText(course.category) }}</span>
+              <h3>{{ getText(course.title) }}</h3>
+              <div class="course-tags">
+                <span v-for="tag in course.tags" :key="JSON.stringify(tag)" class="tag">{{ getText(tag) }}</span>
+              </div>
+              <div class="course-actions">
+                <router-link :to="'/courses/' + course.id" class="course-btn course-btn-primary">
+                  <span>{{ copy.learnMore }}</span>
+                </router-link>
+                <a
+                  :href="getEnrollUrl(course)"
+                  class="course-btn course-btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>{{ copy.enroll }}</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
   </section>
 </template>
@@ -27,89 +59,170 @@
 <script setup>
 import { computed } from 'vue'
 import HeroSection from '@/components/HeroSection.vue'
-import { language } from '@/i18n'
+import PosterLightboxTrigger from '@/components/PosterLightboxTrigger.vue'
+import { getCourseSections } from '@/data/courses'
+import { language, getText } from '@/i18n'
+
+const courseSections = getCourseSections()
+const WHATSAPP_NUMBER = '85296061079'
 
 const copy = computed(() => (
   language.value === 'en'
     ? {
       title: 'ERC STEM Courses',
       subtitle: 'Immersive smart-driving learning for primary/secondary students, parents, and teachers.',
-      modulesTitle: 'Four Course Modules',
-      modulesSubtitle: 'A progressive STEM learning pathway',
-      courseCards: [
-        {
-          category: 'Vehicle Hardware Assembly',
-          title: 'A1 - Lego ERC Course',
-          subtitle: 'Hardware Experience Learning',
-          description: 'Students assemble segmented hardware parts into a functional drivable car, strengthening hands-on making skills and understanding of vehicle structure.',
-          tag1: 'Lego',
-          tag2: 'Hands-on Lab'
-        },
-        {
-          category: 'Programming Applications',
-          title: 'A2 - Microcontroller ERC Course',
-          subtitle: 'Programming Application Learning',
-          description: 'After building the car hardware, students write code for movement commands and learn the full workflow from zero-code setup to stable driving, including turning, acceleration, and reverse control logic.',
-          tag1: 'Coding',
-          tag2: 'Microcontroller'
-        },
-        {
-          category: 'Immersive Simulated Driving',
-          title: 'A3 - CoSpaces VR/AR',
-          subtitle: 'Virtual Scene Operation and Application',
-          description: 'Driving workflow is mapped from virtual scenes into real operation through VR headsets or 3D wall projection. Live telemetry and video are shown on the control console while learners drive like operating a real robot vehicle.',
-          tag1: 'VR/AR',
-          tag2: 'Virtual Scene'
-        },
-        {
-          category: 'Road Safety Skills',
-          title: 'A4 - Practical Driving and Road Safety Education',
-          subtitle: 'Real-Scene Practice and Safety Awareness',
-          description: 'Realistic elements such as traffic lights, junctions, and roundabouts are integrated into the route so learners practice by real traffic rules and improve sensitivity to signs and road instructions.',
-          tag1: 'Real-Scene Driving',
-          tag2: 'Remote Control'
-        }
-      ]
+      learnMore: 'Learn More',
+      enroll: 'Enroll',
+      zoomPoster: 'View poster full size',
+      closeZoom: 'Close'
     }
     : {
       title: 'ERC STEM 課程',
       subtitle: '為小學生、初中生、家長和學校老師提供的智能實景駕駛學習體驗',
-      modulesTitle: '四大課程模組',
-      modulesSubtitle: '循序漸進的 STEM 學習路徑',
-      courseCards: [
-        {
-          category: '汽車硬件拼裝學習',
-          title: 'A1 - Lego ERC課程',
-          subtitle: '硬件體驗學習',
-          description: '讓學童可以從細分的硬件組合成一件可用及可行駛的汽車，從而啟發學生的動手製作能力及認識汽車結構。',
-          tag1: 'Lego',
-          tag2: '動手實驗'
-        },
-        {
-          category: '編程應用',
-          title: 'A2 - Microcontroller ERC課程',
-          subtitle: '編程應用程式及使用學習',
-          description: '在完成硬體汽車製作後，需為車輛編寫程式以實現所需的行進指令。同時，向學生講解從零開始編寫程式到車輛順利行駛的具體步驟，並介紹如何透過程式設計實現轉彎、前進、後退等功能的數據處理方式。',
-          tag1: '編程',
-          tag2: '微控制器'
-        },
-        {
-          category: '實景模擬駕駛',
-          title: 'A3 - Cospaces VR/AR',
-          subtitle: '實景視像模擬鏡頭操作及運用',
-          description: '要將駕駛的所有工序從虛擬場景轉化為實際操作，可以採用虛擬眼鏡或3D實景牆式投影螢幕進行顯示。車輛在實際場地行進時，相關數據和畫面可即時呈現在駕駛者的控制器台上，讓駕駛者透過類似遙控機器人的操作方式，直接操控車輛。',
-          tag1: 'VR/AR',
-          tag2: '虛擬場景'
-        },
-        {
-          category: '道路安全技能',
-          title: 'A4 - 實景操作及教育道路安全常識',
-          subtitle: '實景操作及教育道路安全常識',
-          description: '在車輛行進的路面設計中，可融入真實場景模擬，例如交通燈、路口、迴旋處等，讓學習者根據實際道路規定進行安全操作。這能有效提升學生對交通標誌和指示的敏感度，進一步增強道路安全意識。',
-          tag1: '實景駕駛',
-          tag2: '遙控操作'
-        }
-      ]
+      learnMore: '了解更多',
+      enroll: '報名',
+      zoomPoster: '放大檢視海報',
+      closeZoom: '關閉'
     }
 ))
+
+function getEnrollUrl(course) {
+  if (course.enrollUrl) return course.enrollUrl
+  const title = getText(course.title)
+  const msg = language.value === 'en'
+    ? `Hi ERC, I would like to enroll in the summer course: ${title}`
+    : `你好 ERC，我想報名暑期課程：${title}`
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`
+}
+
+function onPosterError(e, id) {
+  const img = e.target
+  const base = `/images/courses/${id}-poster`
+  const stage = img.dataset.fallbackStage || '0'
+  if (stage === '0') {
+    img.dataset.fallbackStage = '1'
+    img.src = `${base}.jpeg`
+    return
+  }
+  if (stage === '1') {
+    img.dataset.fallbackStage = '2'
+    img.src = `${base}.svg`
+  }
+}
 </script>
+
+<style scoped>
+.course-section {
+  margin-bottom: 3rem;
+}
+.course-section:last-child {
+  margin-bottom: 0;
+}
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.course-item {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-light);
+  border: 2px solid #084c61;
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.course-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+.course-poster {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0;
+  box-sizing: border-box;
+}
+.course-poster :deep(img) {
+  border-radius: 6px;
+}
+.course-info {
+  width: 100%;
+  padding: 1rem 1.1rem 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.course-category {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #177e89;
+  margin-bottom: 0.35rem;
+}
+.course-info h3 {
+  color: #177e89;
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.35;
+}
+.course-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+.course-item :deep(.tag) {
+  background: rgba(23, 126, 137, 0.12);
+  color: #177e89;
+}
+.course-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.course-btn {
+  display: inline-block;
+  width: auto;
+  min-width: 7.5rem;
+  max-width: 85%;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+}
+.course-btn-primary {
+  background: #177e89;
+  color: #fff;
+  border-color: #177e89;
+}
+.course-btn-primary:hover {
+  background: #fff;
+  color: #177e89;
+}
+.course-btn-secondary {
+  background: var(--brand-accent);
+  color: #fff;
+  border-color: var(--brand-accent);
+}
+.course-btn-secondary:hover {
+  background: #fff;
+  color: var(--brand-accent);
+}
+@media (max-width: 768px) {
+  .course-grid {
+    grid-template-columns: 1fr;
+    max-width: 21.6rem;
+  }
+}
+</style>

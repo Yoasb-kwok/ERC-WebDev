@@ -60,7 +60,7 @@
         </router-link>
       </div>
       <div class="levels-cta">
-        <router-link to="/booking" class="cta-button"><span>{{ copy.bookNow }}</span></router-link>
+        <router-link to="/booking" class="cta-button cta-button--accent"><span>{{ copy.bookNow }}</span></router-link>
       </div>
     </div>
   </section>

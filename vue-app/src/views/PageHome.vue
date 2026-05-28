@@ -1,10 +1,10 @@
 <template>
   <section id="home">
     <HeroSection :slides="['/images/P1.webp', '/images/P2.webp']">
-      <h1>{{ copy.heroTitle }} · <span style="color:var(--racing-red)">{{ copy.heroHighlight }}</span></h1>
+      <h1>{{ copy.heroTitle }} · <span class="hero-highlight">{{ copy.heroHighlight }}</span></h1>
       <p>{{ copy.heroDesc }}</p>
       <div style="margin-top: 30px;">
-        <router-link to="/courses" class="cta-button"><span>{{ copy.courseBtn }}</span></router-link>
+        <router-link to="/courses" class="cta-button cta-button--accent"><span>{{ copy.courseBtn }}</span></router-link>
         <router-link to="/contact" class="cta-button btn-secondary"><span>{{ copy.contactBtn }}</span></router-link>
       </div>
     </HeroSection>
@@ -12,6 +12,16 @@
     <!-- 核心體驗 (來自 ai_studio 設計) -->
     <div class="container experience-section">
       <h2 class="section-title experience-title">{{ copy.experienceTitle }}</h2>
+      <div class="experience-video-wrap">
+        <video
+          :src="licenseChallengeVideoSrc"
+          controls
+          playsinline
+          class="experience-video"
+        >
+          {{ copy.videoNotSupported }}
+        </video>
+      </div>
       <div class="experience-features">
         <div class="feature-card">
           <i class="fas fa-gamepad"></i>
@@ -60,6 +70,8 @@ import { computed } from 'vue'
 import HeroSection from '@/components/HeroSection.vue'
 import { language } from '@/i18n'
 
+const licenseChallengeVideoSrc = '/videos/ERC_promo_video.mp4'
+
 const copy = computed(() => (
   language.value === 'en'
     ? {
@@ -69,6 +81,7 @@ const copy = computed(() => (
       courseBtn: 'View Courses',
       contactBtn: 'Contact Us',
       experienceTitle: 'This Is Not a Game. This Is Real Experience.',
+      videoNotSupported: 'Your browser does not support video playback.',
       feature1Title: 'Logitech G29 Force Feedback',
       feature1Desc: 'No plastic-like feel. Real road feedback and throttle precision for authentic control.',
       feature2Title: 'VR First-Person View',
@@ -91,6 +104,7 @@ const copy = computed(() => (
       courseBtn: '查看課程',
       contactBtn: '聯絡我們',
       experienceTitle: '這不是遊戲，是真實體驗',
+      videoNotSupported: '您的瀏覽器不支援影片播放。',
       feature1Title: 'Logitech G29 力回饋',
       feature1Desc: '告別塑膠手感。真實的路感反饋、油門深淺控制，精準還原駕駛體驗。',
       feature2Title: 'VR 第一人稱視角',
@@ -108,3 +122,23 @@ const copy = computed(() => (
     }
 ))
 </script>
+
+<style scoped>
+.hero-highlight {
+  color: var(--brand-accent);
+}
+.experience-video-wrap {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #177e89;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background: #000;
+}
+.experience-video {
+  width: 100%;
+  display: block;
+  vertical-align: top;
+}
+</style>

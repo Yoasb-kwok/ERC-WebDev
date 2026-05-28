@@ -7,7 +7,7 @@
 
     <div class="container">
       <div class="download-container">
-        <i class="fas fa-box-open" style="font-size: 4rem; color: var(--racing-red); margin-bottom: 20px;"></i>
+        <i class="fas fa-box-open" style="font-size: 4rem; color: var(--brand-primary); margin-bottom: 20px;"></i>
         <h2 style="margin-bottom: 10px;">ERC Host Controller</h2>
         <span style="background:var(--electric-blue); color:white; padding:3px 8px; border-radius:4px; font-size:0.9rem;">Version 1.2.0 (Stable)</span>
 

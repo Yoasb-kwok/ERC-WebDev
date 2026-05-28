@@ -1,7 +1,12 @@
 /* --- CSS VARIABLES (LIGHT THEME) --- */
 :root {
-    --racing-red: #ff1801;
-    --electric-blue: #007cc7;
+    /* Brand palette: 60% primary · 30% dark · 10% accent (key CTAs) */
+    --brand-primary: #177E89;
+    --brand-dark: #084C61;
+    --brand-accent: #DB3A34;
+    --electric-blue: var(--brand-primary);
+    --color-primary: var(--brand-primary);
+    --racing-red: var(--brand-accent);
     --bg-white: #ffffff;
     --bg-light: #f4f6f8;
     --text-main: #1a1a1a;
@@ -37,7 +42,7 @@ nav {
     z-index: 1000;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-bottom: 2px solid var(--racing-red);
+    border-bottom: 2px solid var(--brand-primary);
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
@@ -81,11 +86,11 @@ nav {
 }
 
 .nav-btn:hover, .nav-btn.active {
-    color: var(--racing-red);
+    color: var(--brand-primary);
 }
 
 .download-nav {
-    background-color: var(--racing-red);
+    background-color: var(--brand-dark);
     color: white !important;
     padding: 8px 20px;
     border-radius: 4px;
@@ -132,7 +137,7 @@ nav {
 .nav-dropdown-trigger:hover,
 .nav-dropdown.open .nav-dropdown-trigger,
 .nav-dropdown.is-active .nav-dropdown-trigger {
-    color: var(--racing-red);
+    color: var(--brand-primary);
 }
 .nav-dropdown-trigger i.fa-chevron-down {
     font-size: 0.75rem;
@@ -174,7 +179,7 @@ nav {
 }
 .nav-dropdown-menu a:hover {
     background: var(--bg-light);
-    color: var(--racing-red);
+    color: var(--brand-primary);
 }
 .nav-dropdown-menu a i {
     margin-right: 8px;
@@ -185,25 +190,29 @@ nav {
 .language-switcher {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
     margin-left: 8px;
-    padding: 4px 10px;
-    border: 1px solid #d9d9d9;
-    border-radius: 999px;
-    background: #fff;
-}
-.language-switcher i {
-    color: var(--electric-blue);
-    font-size: 0.95rem;
-}
-.language-switcher select {
+    padding: 6px 8px;
     border: none;
+    border-radius: 50%;
     background: transparent;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    color: var(--text-main);
-    outline: none;
+    color: var(--text-muted);
+    font-size: 1.15rem;
     cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+.language-switcher:hover {
+    color: var(--brand-primary);
+    transform: scale(1.08);
+}
+.language-switcher .language-globe-icon {
+    width: 1.15em;
+    height: 1.15em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* --- WHATSAPP FLOATING BUTTON --- */
@@ -346,12 +355,12 @@ nav {
 .cta-button {
     display: inline-block;
     padding: 15px 40px;
-    background: var(--racing-red);
+    background: var(--brand-primary);
     color: white;
     text-decoration: none; /* Added for <a> tags */
     font-weight: bold;
     font-size: 1.2rem;
-    border: 2px solid var(--racing-red);
+    border: 2px solid var(--brand-primary);
     transition: 0.3s;
     transform: skewX(-15deg);
     cursor: pointer;
@@ -361,7 +370,16 @@ nav {
 .cta-button span { display: inline-block; transform: skewX(15deg); }
 .cta-button:hover {
     background: white;
-    color: var(--racing-red);
+    color: var(--brand-primary);
+}
+
+/* 預約課程、預約體驗館等關鍵行動按鈕 (10% accent) */
+.cta-button--accent {
+    background: var(--brand-accent);
+    border-color: var(--brand-accent);
+}
+.cta-button--accent:hover {
+    color: var(--brand-accent);
 }
 
 .btn-secondary {
@@ -409,7 +427,7 @@ nav {
     display: block;
     width: 60px;
     height: 3px;
-    background: var(--racing-red);
+    background: var(--brand-primary);
     margin: 10px auto 0;
 }
 .experience-features {
@@ -424,7 +442,7 @@ nav {
     background: var(--bg-light);
     padding: 2rem;
     border-radius: 10px;
-    border-left: 4px solid var(--racing-red);
+    border-left: 4px solid var(--brand-primary);
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     transition: transform 0.3s ease;
 }
@@ -434,12 +452,12 @@ nav {
 }
 .feature-card i {
     font-size: 3rem;
-    color: var(--racing-red);
+    color: var(--brand-primary);
     margin-bottom: 1rem;
     display: block;
 }
 .feature-card h3 {
-    color: var(--racing-red);
+    color: var(--brand-dark);
     margin-bottom: 1rem;
     font-size: 1.25rem;
 }
@@ -467,7 +485,7 @@ nav {
     display: block;
     width: 60px;
     height: 3px;
-    background: var(--racing-red);
+    background: var(--brand-primary);
     margin: 10px auto 0;
 }
 .level-container {
@@ -522,7 +540,7 @@ nav {
 }
 .badge.novice { background: #4CAF50; color: white; }
 .badge.pro { background: #f0db4f; color: #1a1a1a; }
-.badge.master { background: var(--racing-red); color: white; }
+.badge.master { background: var(--brand-dark); color: white; }
 .level-info p {
     color: var(--text-muted);
     font-size: 0.95rem;
@@ -539,7 +557,7 @@ nav {
     color: var(--text-muted);
 }
 .level-info ul li i {
-    color: var(--racing-red);
+    color: var(--brand-primary);
     margin-right: 8px;
     width: 18px;
 }
@@ -568,7 +586,7 @@ nav {
     color: var(--electric-blue);
 }
 .level-card-link:hover .level-card-enter {
-    color: var(--racing-red);
+    color: var(--brand-dark);
 }
 
 /* Level 詳情頁（賽道影片 + 玩法介紹） */
@@ -591,7 +609,7 @@ nav {
     transition: color 0.2s;
 }
 .level-detail-back:hover {
-    color: var(--racing-red);
+    color: var(--brand-primary);
 }
 .level-detail-header {
     margin-bottom: 2.5rem;
@@ -715,7 +733,7 @@ nav {
 .gameplay-point {
     margin-top: 0.5rem;
     padding-left: 1rem;
-    border-left: 3px solid var(--racing-red);
+    border-left: 3px solid var(--brand-dark);
     font-size: 0.95rem;
 }
 .level-detail-cta {
@@ -933,7 +951,7 @@ flex-direction: row-reverse;
 }
 
 .card-date {
-    color: var(--racing-red);
+    color: var(--brand-dark);
     font-size: 0.9rem;
     font-weight: bold;
     margin-bottom: 10px;
@@ -962,8 +980,8 @@ flex-direction: row-reverse;
 
 .tag {
     display: inline-block;
-    background: rgba(0, 124, 199, 0.1);
-    color: var(--electric-blue);
+    background: rgba(23, 126, 137, 0.12);
+    color: var(--brand-primary);
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
@@ -978,7 +996,7 @@ flex-direction: row-reverse;
     margin: 0 auto;
     background: var(--bg-light);
     padding: 50px;
-    border-top: 5px solid var(--racing-red);
+    border-top: 5px solid var(--brand-primary);
     text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -1015,7 +1033,7 @@ flex-direction: row-reverse;
     display: block;
     width: 60px;
     height: 3px;
-    background: var(--racing-red);
+    background: var(--brand-primary);
     margin: 10px auto 0;
 }
 .pricing-container {
@@ -1046,18 +1064,18 @@ flex-direction: row-reverse;
     box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 .pricing-card-popular {
-    border-color: var(--racing-red);
-    box-shadow: 0 6px 20px rgba(255, 24, 1, 0.12);
+    border-color: var(--brand-dark);
+    box-shadow: 0 6px 20px rgba(8, 76, 97, 0.15);
 }
 .pricing-card-popular:hover {
-    border-color: var(--racing-red);
-    box-shadow: 0 12px 28px rgba(255, 24, 1, 0.2);
+    border-color: var(--brand-dark);
+    box-shadow: 0 12px 28px rgba(8, 76, 97, 0.22);
 }
 .pricing-ribbon {
     position: absolute;
     top: 20px;
     right: -32px;
-    background: var(--racing-red);
+    background: var(--brand-dark);
     color: white;
     padding: 6px 36px;
     font-weight: bold;
@@ -1077,7 +1095,7 @@ flex-direction: row-reverse;
 .price-tag .price {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--racing-red);
+    color: var(--brand-dark);
     font-family: var(--font-display);
     line-height: 1;
 }
@@ -1112,15 +1130,15 @@ flex-direction: row-reverse;
     border-bottom: none;
 }
 .pricing-features li i {
-    color: var(--racing-red);
+    color: var(--brand-primary);
     margin-right: 10px;
     width: 20px;
     text-align: center;
 }
 .pricing-select-btn {
     background: transparent;
-    border: 2px solid var(--racing-red);
-    color: var(--racing-red);
+    border: 2px solid var(--brand-accent);
+    color: var(--brand-accent);
     padding: 12px 20px;
     border-radius: 6px;
     font-weight: 700;
@@ -1131,11 +1149,11 @@ flex-direction: row-reverse;
     margin-top: auto;
 }
 .pricing-select-btn:hover {
-    background: var(--racing-red);
+    background: var(--brand-accent);
     color: white;
 }
 .pricing-card-popular .pricing-select-btn {
-    background: var(--racing-red);
+    background: var(--brand-accent);
     color: white;
 }
 .pricing-card-popular .pricing-select-btn:hover {
@@ -1214,10 +1232,10 @@ flex-direction: row-reverse;
 }
 
 .time-slot-btn.active {
-    background-color: var(--racing-red);
-    border-color: var(--racing-red);
+    background-color: var(--brand-accent);
+    border-color: var(--brand-accent);
     color: white;
-    box-shadow: 0 0 10px rgba(255, 24, 1, 0.4);
+    box-shadow: 0 0 10px rgba(219, 58, 52, 0.35);
 }
 
 .booking-form {
@@ -1391,11 +1409,8 @@ footer p {
         display: block; /* Show hamburger icon on mobile */
     }
     .language-switcher {
-        width: calc(100% - 24px);
-        justify-content: center;
-        margin: 10px auto 4px;
-        border-radius: 8px;
-        padding: 10px;
+        margin: 12px auto 4px;
+        font-size: 1.35rem;
     }
 
     /* General page adjustments */

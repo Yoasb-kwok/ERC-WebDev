@@ -169,7 +169,7 @@ function galleryNext() {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-primary, #2563eb);
+  color: var(--brand-primary);
   text-decoration: none;
   font-size: 0.95rem;
   margin-bottom: 1.5rem;
@@ -209,7 +209,7 @@ function galleryNext() {
 }
 .exhibition-detail-intro h2 i,
 .exhibition-detail-gallery h2 i {
-  color: var(--color-primary, #2563eb);
+  color: var(--brand-primary);
 }
 .exhibition-detail-intro p {
   line-height: 1.7;
@@ -283,7 +283,7 @@ function galleryNext() {
   height: 48px;
   border: none;
   border-radius: 50%;
-  background: var(--color-primary, #2563eb);
+  background: var(--brand-primary);
   color: #fff;
   cursor: pointer;
   display: flex;
@@ -344,6 +344,6 @@ function galleryNext() {
   padding: 3rem;
 }
 .exhibition-detail-not-found a {
-  color: var(--color-primary, #2563eb);
+  color: var(--brand-primary);
 }
 </style>

@@ -56,7 +56,7 @@ const copy = computed(() => (
   color: inherit;
 }
 .exhibition-card:hover .exhibition-card-link {
-  color: var(--color-primary, #2563eb);
+  color: var(--brand-primary);
 }
 .exhibition-card-link {
   display: inline-flex;

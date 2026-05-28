@@ -81,7 +81,7 @@
             <label for="booking-email">{{ copy.emailLabel }}</label>
             <input id="booking-email" v-model="form.email" type="email" :placeholder="copy.emailPlaceholder" required>
           </div>
-          <button type="submit" class="cta-button" :disabled="submitting">
+          <button type="submit" class="cta-button cta-button--accent" :disabled="submitting">
             <span>{{ submitting ? copy.submitting : copy.submitBtn }}</span>
           </button>
         </form>

@@ -14,22 +14,50 @@
     <div class="nav-links" :class="{ open: mobileOpen }">
       <router-link to="/home" class="nav-btn" active-class="active" data-page-id="home" @click="closeMobile">{{ navText.home }}</router-link>
       <router-link to="/exhibitions" class="nav-btn" active-class="active" data-page-id="exhibitions" @click="closeMobile">{{ navText.exhibitions }}</router-link>
-      <router-link to="/courses" class="nav-btn" active-class="active" data-page-id="courses" @click="closeMobile">{{ navText.courses }}</router-link>
-      <router-link to="/about" class="nav-btn" active-class="active" data-page-id="about" @click="closeMobile">{{ navText.about }}</router-link>
-
-      <!-- 駕駛體驗館下拉：考照挑戰、預約 -->
+      <!-- STEM 教育下拉：STEM 課程、STEM 產品 -->
       <div
         class="nav-dropdown"
-        :class="{ open: dropdownOpen, 'is-active': isBookingGroup }"
-        @mouseenter="onDropdownEnter"
-        @mouseleave="onDropdownLeave"
+        :class="{ open: stemDropdownOpen, 'is-active': isStemGroup }"
+        @mouseenter="onStemDropdownEnter"
+        @mouseleave="stemDropdownOpen = false"
       >
         <button
           type="button"
           class="nav-dropdown-trigger"
           aria-haspopup="true"
-          :aria-expanded="dropdownOpen"
-          @click="dropdownOpen = !dropdownOpen"
+          :aria-expanded="stemDropdownOpen"
+          @click="stemDropdownOpen = !stemDropdownOpen"
+        >
+          {{ navText.stemEducation }}
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <ul class="nav-dropdown-menu">
+          <li>
+            <router-link to="/courses" @click="closeMobile">
+              <i class="fas fa-graduation-cap"></i>{{ navText.stemCourses }}
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/stem-products" @click="closeMobile">
+              <i class="fas fa-box-open"></i>{{ navText.stemProducts }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 駕駛體驗館下拉：考照挑戰、預約 -->
+      <div
+        class="nav-dropdown"
+        :class="{ open: experienceDropdownOpen, 'is-active': isBookingGroup }"
+        @mouseenter="onExperienceDropdownEnter"
+        @mouseleave="experienceDropdownOpen = false"
+      >
+        <button
+          type="button"
+          class="nav-dropdown-trigger"
+          aria-haspopup="true"
+          :aria-expanded="experienceDropdownOpen"
+          @click="experienceDropdownOpen = !experienceDropdownOpen"
         >
           {{ navText.experienceCenter }}
           <i class="fas fa-chevron-down"></i>
@@ -48,18 +76,54 @@
         </ul>
       </div>
 
-      <router-link to="/contact" class="nav-btn" active-class="active" data-page-id="contact" @click="closeMobile">{{ navText.contact }}</router-link>
+      <!-- 關於我們下拉：關於 ERC、聯絡我們 -->
+      <div
+        class="nav-dropdown"
+        :class="{ open: aboutDropdownOpen, 'is-active': isAboutGroup }"
+        @mouseenter="onAboutDropdownEnter"
+        @mouseleave="aboutDropdownOpen = false"
+      >
+        <button
+          type="button"
+          class="nav-dropdown-trigger"
+          aria-haspopup="true"
+          :aria-expanded="aboutDropdownOpen"
+          @click="aboutDropdownOpen = !aboutDropdownOpen"
+        >
+          {{ navText.aboutUs }}
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <ul class="nav-dropdown-menu">
+          <li>
+            <router-link to="/about" @click="closeMobile">
+              <i class="fas fa-building"></i>{{ navText.about }}
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/contact" @click="closeMobile">
+              <i class="fas fa-envelope"></i>{{ navText.contact }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
+
       <router-link to="/download" class="nav-btn download-nav" active-class="active" data-page-id="download" @click="closeMobile">
         <span><i class="fas fa-download"></i> {{ navText.download }}</span>
       </router-link>
 
-      <div class="language-switcher">
-        <i class="fas fa-globe"></i>
-        <select v-model="selectedLanguage" aria-label="Language selector">
-          <option value="zh">中文</option>
-          <option value="en">ENG</option>
-        </select>
-      </div>
+      <button
+        type="button"
+        class="language-switcher"
+        :aria-label="language === 'zh' ? 'Switch to English' : '切換至中文'"
+        :title="language === 'zh' ? 'English' : '中文'"
+        @click="toggleLanguage"
+      >
+        <svg class="language-globe-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9.25" />
+          <ellipse cx="12" cy="12" rx="4" ry="9.25" />
+          <path d="M2.75 12h18.5M12 2.75c2.8 2.67 4.25 5.58 4.25 9.25S14.8 19.58 12 22.25M12 2.75C9.2 5.42 7.75 8.33 7.75 12s1.45 6.58 4.25 9.25" />
+        </svg>
+      </button>
     </div>
   </nav>
 </template>
@@ -71,18 +135,22 @@ import { language, setLanguage } from '@/i18n'
 
 const route = useRoute()
 const mobileOpen = ref(false)
-const dropdownOpen = ref(false)
-const selectedLanguage = computed({
-  get: () => language.value,
-  set: (value) => setLanguage(value)
-})
+const stemDropdownOpen = ref(false)
+const aboutDropdownOpen = ref(false)
+const experienceDropdownOpen = ref(false)
+function toggleLanguage() {
+  setLanguage(language.value === 'zh' ? 'en' : 'zh')
+}
 
 const navText = computed(() => (
   language.value === 'en'
     ? {
       home: 'Home',
       exhibitions: 'Exhibitions',
-      courses: 'Courses',
+      stemEducation: 'STEM Education',
+      stemCourses: 'STEM Courses',
+      stemProducts: 'STEM Products',
+      aboutUs: 'About Us',
       about: 'About ERC',
       experienceCenter: 'ERC Driving Experience Center',
       licenseChallenge: 'License Challenge',
@@ -93,7 +161,10 @@ const navText = computed(() => (
     : {
       home: '首頁',
       exhibitions: '展覽活動',
-      courses: '課程',
+      stemEducation: 'STEM教育',
+      stemCourses: 'STEM課程',
+      stemProducts: 'STEM產品',
+      aboutUs: '關於我們',
       about: '關於 ERC',
       experienceCenter: 'ERC駕駛體驗館',
       licenseChallenge: '考照挑戰',
@@ -103,25 +174,41 @@ const navText = computed(() => (
     }
 ))
 
+const isStemGroup = computed(() =>
+  route.path === '/stem-products' || route.path.startsWith('/stem-products/') || route.path.startsWith('/courses')
+)
+
+const isAboutGroup = computed(() =>
+  ['/about', '/contact'].includes(route.path)
+)
+
 const isBookingGroup = computed(() =>
-  ['/booking', '/license-challenge'].includes(route.path)
+  ['/booking', '/license-challenge'].includes(route.path) || route.path.startsWith('/license-challenge/')
 )
 
 function closeMobile() {
   mobileOpen.value = false
-  dropdownOpen.value = false
+  stemDropdownOpen.value = false
+  aboutDropdownOpen.value = false
+  experienceDropdownOpen.value = false
 }
 
-function onDropdownEnter() {
-  if (window.innerWidth >= 901) dropdownOpen.value = true
+function onStemDropdownEnter() {
+  if (window.innerWidth >= 901) stemDropdownOpen.value = true
 }
 
-function onDropdownLeave() {
-  dropdownOpen.value = false
+function onAboutDropdownEnter() {
+  if (window.innerWidth >= 901) aboutDropdownOpen.value = true
+}
+
+function onExperienceDropdownEnter() {
+  if (window.innerWidth >= 901) experienceDropdownOpen.value = true
 }
 
 watch(() => route.path, () => {
   mobileOpen.value = false
-  dropdownOpen.value = false
+  stemDropdownOpen.value = false
+  aboutDropdownOpen.value = false
+  experienceDropdownOpen.value = false
 })
 </script>

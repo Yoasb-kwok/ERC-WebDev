@@ -1,7 +1,11 @@
 /* --- CSS VARIABLES (LIGHT THEME) --- */
 :root {
-    --racing-red: #ff1801;
-    --electric-blue: #007cc7;
+    --brand-primary: #177E89;
+    --brand-dark: #084C61;
+    --brand-accent: #DB3A34;
+    --electric-blue: var(--brand-primary);
+    --color-primary: var(--brand-primary);
+    --racing-red: var(--brand-accent);
     --bg-white: #ffffff;
     --bg-light: #f4f6f8;
     --text-main: #1a1a1a;
