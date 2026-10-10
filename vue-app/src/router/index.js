@@ -8,6 +8,7 @@ const routes = [
   { path: '/exhibitions/:id', name: 'ExhibitionDetail', component: () => import('@/views/PageExhibitionDetail.vue'), meta: { id: 'exhibitions' } },
   { path: '/courses', name: 'Courses', component: () => import('@/views/PageCourses.vue'), meta: { id: 'courses' } },
   { path: '/courses/:id', name: 'CourseDetail', component: () => import('@/views/PageCourseDetail.vue'), meta: { id: 'courses' } },
+  { path: '/school-progress', name: 'SchoolProgress', component: () => import('@/views/PageSchoolProgress.vue'), meta: { id: 'school-progress' } },
   { path: '/stem-products', name: 'StemProducts', component: () => import('@/views/PageStemProducts.vue'), meta: { id: 'stem-products' } },
   { path: '/stem-products/:id', name: 'StemProductDetail', component: () => import('@/views/PageStemProductDetail.vue'), meta: { id: 'stem-products' } },
   { path: '/contact', name: 'Contact', component: () => import('@/views/PageContact.vue'), meta: { id: 'contact' } },
