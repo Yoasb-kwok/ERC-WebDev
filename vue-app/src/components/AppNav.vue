@@ -42,6 +42,11 @@
               <i class="fas fa-box-open"></i>{{ navText.stemProducts }}
             </router-link>
           </li>
+          <li>
+            <router-link to="/school-progress" @click="closeMobile">
+              <i class="fas fa-clipboard-list"></i>{{ navText.schoolProgress }}
+            </router-link>
+          </li>
         </ul>
       </div>
 
@@ -150,6 +155,7 @@ const navText = computed(() => (
       stemEducation: 'STEM Education',
       stemCourses: 'STEM Courses',
       stemProducts: 'STEM Products',
+      schoolProgress: 'School Progress',
       aboutUs: 'About Us',
       about: 'About ERC',
       experienceCenter: 'ERC Driving Experience Center',
@@ -164,6 +170,7 @@ const navText = computed(() => (
       stemEducation: 'STEM教育',
       stemCourses: 'STEM課程',
       stemProducts: 'STEM產品',
+      schoolProgress: '學校進度',
       aboutUs: '關於我們',
       about: '關於 ERC',
       experienceCenter: 'ERC駕駛體驗館',
@@ -175,7 +182,7 @@ const navText = computed(() => (
 ))
 
 const isStemGroup = computed(() =>
-  route.path === '/stem-products' || route.path.startsWith('/stem-products/') || route.path.startsWith('/courses')
+  route.path === '/stem-products' || route.path.startsWith('/stem-products/') || route.path.startsWith('/courses') || route.path === '/school-progress'
 )
 
 const isAboutGroup = computed(() =>
